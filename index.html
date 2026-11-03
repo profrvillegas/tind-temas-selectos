@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrenador EGEL Informática</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Concepto: hoja de examen con tinta azul sobre papel frío; una pregunta por pantalla, mapa de reactivos siempre a la vista. */
+:root {
+  --bg: #F7F4F2;
+  --surface: #FFFFFF;
+  --ink: #231F20;
+  --muted: #6B6365;
+  --line: #E3DCD9;
+  --accent: #FF5900;
+  --accent-ink: #231F20;
+  --ok: #1B7A4B;
+  --bad: #B3261E;
+  --warn: #9A5B00;
+  --s0: #C74600;
+  --s1: #231F20;
+  --s2: #0F766E;
+  --s3: #7C3AED;
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #181516; --surface: #231F20; --ink: #F3EEEC; --muted: #B3AAAC; --line: #3D3637;
+    --accent: #FF5900; --accent-ink: #231F20; --ok: #55D190; --bad: #FF8A80; --warn: #F2B35E;
+    --s0: #FF7A33; --s1: #D9D2D0; --s2: #4FD1C5; --s3: #B794F6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #181516; --surface: #231F20; --ink: #F3EEEC; --muted: #B3AAAC; --line: #3D3637;
+  --accent: #FF5900; --accent-ink: #231F20; --ok: #55D190; --bad: #FF8A80; --warn: #F2B35E;
+  --s0: #FF7A33; --s1: #D9D2D0; --s2: #4FD1C5; --s3: #B794F6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-body); font-size: 16px; line-height: 1.55;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 880px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; line-height: 1.2; }
+p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { font-family: var(--font-mono); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); border-left: 6px solid var(--accent); padding-left: 10px; }
+.who { font-size: 14px; color: var(--muted); }
+.who strong { color: var(--ink); font-weight: 600; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 24px; }
+.btn {
+  border: 1px solid var(--line); background: var(--surface); border-radius: 8px;
+  padding: 10px 18px; font-weight: 500; min-height: 44px;
+}
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.btn.primary:hover { filter: brightness(1.08); }
+.btn.danger { border-color: var(--bad); color: var(--bad); }
+.btn:disabled { opacity: .45; cursor: not-allowed; }
+.btn:disabled:hover { border-color: var(--line); filter: none; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.row.end { justify-content: flex-end; }
+.row.between { justify-content: space-between; }
+
+/* Bienvenida */
+.hero { border-top: 5px solid var(--accent); }
+.hero h1 { font-size: clamp(28px, 5vw, 40px); font-weight: 600; }
+.hero .lead { color: var(--muted); max-width: 60ch; margin-top: 10px; }
+.secgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; margin: 22px 0; }
+.secitem { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; border-top: 4px solid var(--sc); display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.secitem b { font-family: var(--font-mono); font-size: 22px; font-weight: 500; color: var(--sc); }
+.secitem span { font-size: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; max-width: 460px; }
+.field label { font-weight: 500; }
+.field input {
+  font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  border-radius: 8px; padding: 11px 14px; min-height: 46px; width: 100%;
+}
+.field input:focus { border-color: var(--accent); }
+.resume { border: 1px dashed var(--accent); border-radius: 8px; padding: 14px 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px; }
+
+/* Examen */
+.progress { display: flex; flex-direction: column; gap: 6px; }
+.progress .meta { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 13px; color: var(--muted); gap: 8px; flex-wrap: wrap; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar > i { display: block; height: 100%; background: var(--accent); transition: width .2s; }
+.chip {
+  display: inline-block; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--sc); background: color-mix(in srgb, var(--sc) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--sc) 35%, var(--surface)); border-radius: 6px; padding: 3px 8px;
+}
+.qhead { display: flex; justify-content: space-between; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+.qnum { font-family: var(--font-mono); font-size: 13px; color: var(--muted); }
+.qtext { font-size: 18px; line-height: 1.6; max-width: 70ch; }
+.qtext code, .opt code { font-family: var(--font-mono); font-size: .9em; background: var(--bg); padding: 1px 5px; border-radius: 4px; }
+.opts { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.opt {
+  display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+  background: var(--surface); border: 1.5px solid var(--line); border-radius: 8px; padding: 14px 16px;
+}
+.opt:hover { border-color: var(--accent); }
+.opt .ltr {
+  flex: none; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%;
+  border: 1.5px solid var(--line); font-family: var(--font-mono); font-size: 13px; font-weight: 500; color: var(--muted);
+}
+.opt .txt { min-width: 0; overflow-wrap: anywhere; }
+.opt[aria-checked="true"] { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, var(--surface)); }
+.opt[aria-checked="true"] .ltr { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+
+.map { display: flex; flex-direction: column; gap: 12px; }
+.map h3 { font-size: 13px; font-family: var(--font-mono); font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.maprow { display: flex; flex-direction: column; gap: 6px; }
+.maprow .lab { font-size: 13px; color: var(--sc); font-weight: 500; }
+.dots { display: flex; flex-wrap: wrap; gap: 6px; }
+.dot {
+  width: 38px; height: 38px; border-radius: 6px; border: 1.5px solid var(--line); background: var(--surface);
+  font-family: var(--font-mono); font-size: 13px; color: var(--muted); padding: 0;
+}
+.dot.done { background: color-mix(in srgb, var(--sc) 16%, var(--surface)); border-color: color-mix(in srgb, var(--sc) 60%, var(--surface)); color: var(--ink); }
+.dot.cur { outline: 3px solid var(--accent); outline-offset: 1px; font-weight: 600; }
+
+.confirm {
+  border: 1.5px solid var(--warn); border-radius: 8px; padding: 14px 16px;
+  background: color-mix(in srgb, var(--warn) 10%, var(--surface)); display: flex; flex-direction: column; gap: 12px;
+}
+
+/* Resultados */
+.score { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
+.score .big { font-family: var(--font-mono); font-size: clamp(40px, 8vw, 64px); font-weight: 500; line-height: 1; }
+.score .pct { font-size: 18px; color: var(--muted); }
+.tablewrap { overflow-x: auto; margin-top: 16px; }
+table { border-collapse: collapse; width: 100%; min-width: 560px; }
+th, td { text-align: left; padding: 11px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+th { font-family: var(--font-mono); font-size: 12px; font-weight: 500; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+tr.total td { font-weight: 600; border-bottom: none; background: var(--bg); }
+.meter { width: 120px; height: 8px; background: var(--line); border-radius: 4px; overflow: hidden; display: inline-block; vertical-align: middle; }
+.meter > i { display: block; height: 100%; }
+.lvl { font-size: 13px; font-weight: 600; white-space: nowrap; }
+.lvl.good { color: var(--ok); } .lvl.mid { color: var(--warn); } .lvl.low { color: var(--bad); }
+.note { font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+.review { display: flex; flex-direction: column; gap: 14px; }
+.rcard { border-left: 4px solid var(--sc); }
+.ans { display: flex; gap: 10px; align-items: flex-start; border-radius: 8px; padding: 10px 12px; margin-top: 10px; border: 1px solid var(--line); }
+.ans .tag { flex: none; font-family: var(--font-mono); font-size: 11px; letter-spacing: .05em; text-transform: uppercase; font-weight: 500; padding-top: 3px; min-width: 92px; }
+.ans.bad { border-color: color-mix(in srgb, var(--bad) 50%, var(--surface)); background: color-mix(in srgb, var(--bad) 7%, var(--surface)); }
+.ans.bad .tag { color: var(--bad); }
+.ans.good { border-color: color-mix(in srgb, var(--ok) 50%, var(--surface)); background: color-mix(in srgb, var(--ok) 7%, var(--surface)); }
+.ans.good .tag { color: var(--ok); }
+.why { margin-top: 12px; font-size: 15px; color: var(--muted); }
+.why b { color: var(--ink); }
+.empty { text-align: center; padding: 28px 12px; color: var(--ok); font-weight: 600; }
+
+@media (max-width: 520px) {
+  .card { padding: 18px; }
+  .qtext { font-size: 17px; }
+  .ans { flex-direction: column; gap: 2px; }
+  .ans .tag { padding-top: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .bar > i { transition: none; } }
+</style>
+
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <span class="brand">EGEL · Informática · Práctica</span>
+    <span class="who" id="who"></span>
+  </div>
+  <main id="app"></main>
+</div>
+
+<script>
+const SECTIONS = [
+  { name: 'Necesidades informáticas de una organización', short: 'Necesidades informáticas', n: 11, c: 'var(--s0)' },
+  { name: 'Gestión de proyectos informáticos', short: 'Gestión de proyectos', n: 8, c: 'var(--s1)' },
+  { name: 'Implementación de sistemas de información', short: 'Implementación de sistemas', n: 10, c: 'var(--s2)' },
+  { name: 'Función informática', short: 'Función informática', n: 7, c: 'var(--s3)' }
+];
+
+/* La opción correcta siempre es o[0] en el banco; el orden se mezcla en cada intento. */
+const Q = [
+  /* ===== Necesidades informáticas (11) ===== */
+  { s: 0,
+    q: 'Una empresa de renta de embarcaciones para transporte de mercancías requiere llevar el control de sus navíos y las solicitudes de servicio, así como cumplir con el reporte normativo en línea de las transacciones efectuadas que le exigen las autoridades y registrar sus entradas y salidas del puerto en el sistema portuario. ¿Qué sistemas corresponden a las necesidades informáticas para operar de acuerdo con lo requerido?',
+    o: ['Sistema de gestión de flota y servicios, integración con la plataforma de reporte normativo de la autoridad e interfaz con el sistema portuario.',
+        'Sistema de gestión de inventarios y servicios, integración con la plataforma de facturación del cliente e interfaz con el sistema bancario.',
+        'Sistema de gestión de flota y servicios, integración con la plataforma de reporte interno de la gerencia e interfaz con el sistema de recursos humanos.'],
+    e: 'Cada necesidad del enunciado tiene su sistema: controlar navíos y solicitudes (gestión de flota y servicios), reportar a la autoridad en línea (integración con la plataforma normativa) y registrar entradas y salidas (interfaz con el sistema portuario). Las otras opciones cambian al menos una de esas tres piezas por otra que el caso no pide.' },
+  { s: 0,
+    q: 'Una entidad gubernamental necesita actualizar sus equipos de seguridad informática de acuerdo con su planeación de negocios, la cual dicta la priorización de medidas de seguridad ante amenazas informáticas. Por ello, la entidad se ha enfocado en la intercepción de las conexiones de red efectuadas desde los dispositivos clientes hasta los ordenadores destino, así como el soporte a una navegación web segura y con alto rendimiento. ¿Qué equipo se requiere de acuerdo con la clasificación de las necesidades a nivel de hardware para seguridad informática?',
+    o: ['Servidor proxy, que actúa como intermediario de las conexiones del cliente hacia el destino, filtra el contenido web y almacena en caché las respuestas.',
+        'Firewall perimetral, que filtra el tráfico de entrada y salida de la red mediante reglas de puertos y protocolos, sin actuar como intermediario de las conexiones.',
+        'Sistema de detección de intrusos (IDS), que monitorea el tráfico de la red y emite alertas, sin interceptar las conexiones ni almacenar respuestas.'],
+    e: 'La intercepción de conexiones cliente-destino y la navegación con alto rendimiento (caché) son rasgos del servidor proxy. El firewall filtra por reglas y el IDS solo observa y alerta.' },
+  { s: 0,
+    q: 'Una aseguradora opera con un sistema de pólizas desarrollado en los años noventa, una plataforma web de agentes y una aplicación móvil de siniestros, todos con tecnologías distintas. Requiere que estas aplicaciones intercambien información mediante mensajes, sin reescribir cada una. ¿Qué componente de software cubre esta necesidad?',
+    o: ['Middleware orientado a mensajes, que comunica aplicaciones heterogéneas mediante una capa intermedia de integración.',
+        'Sistema gestor de base de datos, que centraliza la información de todas las aplicaciones en un único repositorio relacional.',
+        'Sistema operativo de red, que administra los recursos compartidos y los usuarios de todos los equipos conectados.'],
+    e: 'El middleware es la capa intermedia que permite que aplicaciones con tecnologías diferentes intercambien mensajes sin modificarlas. Centralizar datos o administrar recursos de red no resuelve la interoperabilidad.' },
+  { s: 0,
+    q: 'Una clínica debe conservar durante diez años los expedientes digitales de sus pacientes, respaldándolos todos los días. Los datos casi nunca se consultan después del primer año y el presupuesto de almacenamiento es limitado. ¿Qué solución de almacenamiento responde mejor a esta necesidad?',
+    o: ['Biblioteca de cintas (LTO) para respaldo y archivo de largo plazo, con bajo costo por gigabyte y acceso poco frecuente.',
+        'Arreglo de discos de estado sólido (SSD) en RAID 10 para respaldo y archivo, con alto rendimiento de lectura y acceso frecuente.',
+        'Memoria caché distribuida para respaldo y archivo, con latencia mínima y acceso inmediato a todos los expedientes.'],
+    e: 'Retención larga, consulta esporádica y presupuesto limitado apuntan al medio más barato por gigabyte: la cinta. SSD y caché ofrecen velocidad que el caso no necesita y encarecen la solución.' },
+  { s: 0,
+    q: 'Un corporativo con diez sucursales en distintas ciudades requiere que cada una acceda a los sistemas de la matriz utilizando como medio de transporte el Internet público, protegiendo la confidencialidad de la información. ¿Qué solución de red se requiere?',
+    o: ['VPN sitio a sitio, que establece túneles cifrados (por ejemplo, IPsec) entre la matriz y cada sucursal sobre Internet.',
+        'Enlace dedicado MPLS, que establece circuitos privados entre la matriz y cada sucursal sobre la red del proveedor de telecomunicaciones.',
+        'VLAN por sucursal, que segmenta lógicamente el tráfico dentro de la red local de la matriz.'],
+    e: 'La condición clave es usar Internet público con confidencialidad: eso lo resuelve una VPN con túneles cifrados. MPLS no utiliza Internet público y las VLAN segmentan una red local, no conectan sedes.' },
+  { s: 0,
+    q: 'La dirección general de una cadena de tiendas requiere explorar el histórico de ventas de varios años desde distintas perspectivas (producto, región y periodo) para definir su estrategia comercial. ¿Qué tipo de sistema satisface esta necesidad?',
+    o: ['Sistema de inteligencia de negocios sobre un almacén de datos, con análisis multidimensional (OLAP).',
+        'Sistema de procesamiento de transacciones (TPS), con captura en línea (OLTP) de cada venta realizada.',
+        'Sistema de información gerencial (MIS), con reportes operativos periódicos de formato predefinido.'],
+    e: 'Explorar datos históricos por varias dimensiones es análisis OLAP sobre un almacén de datos (inteligencia de negocios). El TPS captura transacciones y el MIS entrega reportes fijos, no exploración libre.' },
+  { s: 0,
+    q: 'Una empresa distribuidora necesita registrar el historial de contacto con sus clientes, dar seguimiento a las oportunidades de venta y planear campañas de promoción segmentadas. ¿Qué tipo de sistema cubre esta necesidad?',
+    o: ['CRM, enfocado en la gestión de la relación con el cliente, sus contactos y oportunidades de venta.',
+        'ERP, enfocado en la integración de los procesos internos de finanzas, producción y recursos humanos.',
+        'SCM, enfocado en la gestión de la cadena de suministro, proveedores y logística de entrega.'],
+    e: 'Historial de contacto, oportunidades de venta y campañas segmentadas son funciones propias de un CRM. El ERP integra procesos internos y el SCM gestiona proveedores y logística.' },
+  { s: 0,
+    q: 'Una empresa emergente quiere desplegar la aplicación que desarrollan sus programadores sin administrar servidores, sistema operativo ni ambiente de ejecución; solo desea controlar su código y sus datos. ¿Qué modelo de servicio en la nube necesita?',
+    o: ['PaaS (plataforma como servicio), donde el proveedor gestiona la infraestructura y el ambiente de ejecución, y el cliente gestiona su aplicación.',
+        'IaaS (infraestructura como servicio), donde el proveedor gestiona la infraestructura física, y el cliente gestiona el sistema operativo, el ambiente y su aplicación.',
+        'SaaS (software como servicio), donde el proveedor gestiona toda la pila, y el cliente solo utiliza una aplicación ya construida.'],
+    e: 'Si el cliente solo conserva su código y datos, y el proveedor se encarga del sistema operativo y del ambiente de ejecución, es PaaS. En IaaS el cliente administra el sistema operativo; en SaaS no desarrolla la aplicación.' },
+  { s: 0,
+    q: 'Al levantar requerimientos de un portal de ventas, el área usuaria establece: «el sistema debe responder cada consulta en menos de dos segundos con 500 usuarios concurrentes». ¿Cómo se clasifica este requerimiento?',
+    o: ['No funcional, de rendimiento: describe una cualidad con la que el sistema debe operar.',
+        'Funcional, de procesamiento: describe una operación que el sistema debe realizar sobre los datos.',
+        'De restricción de dominio: describe una regla del negocio impuesta por la normatividad aplicable.'],
+    e: 'Tiempo de respuesta y concurrencia son cualidades de operación, es decir, requerimientos no funcionales de rendimiento. Un requerimiento funcional describe qué hace el sistema.' },
+  { s: 0,
+    q: 'Un banco define que, ante una falla mayor, sus servicios de banca en línea deben restablecerse en un máximo de cuatro horas y que la pérdida tolerable de datos no debe superar los quince minutos. ¿Qué parámetros de continuidad está estableciendo?',
+    o: ['RTO de 4 horas y RPO de 15 minutos.',
+        'RPO de 4 horas y RTO de 15 minutos.',
+        'MTTR de 4 horas y MTBF de 15 minutos.'],
+    e: 'RTO (Recovery Time Objective) es el tiempo máximo para restablecer el servicio; RPO (Recovery Point Objective) es la pérdida máxima de datos tolerable. Las otras opciones invierten los valores o usan métricas de fiabilidad distintas.' },
+  { s: 0,
+    q: 'Una universidad requiere una suite de ofimática que no tenga costo de licencia y cuyo código fuente pueda modificarse y redistribuirse para adaptarla a sus laboratorios. ¿Qué tipo de software cumple con lo requerido?',
+    o: ['Software de código abierto, con licencia (por ejemplo, GPL) que permite usar, modificar y redistribuir el código fuente.',
+        'Software gratuito (freeware), de uso sin costo pero sin acceso al código fuente ni derecho a modificarlo.',
+        'Software propietario con licencia por usuario, que permite el uso bajo pago y sin acceso al código fuente.'],
+    e: 'Modificar y redistribuir el código solo es posible con software de código abierto. El freeware es gratuito pero cerrado, y el propietario es cerrado y de pago.' },
+
+  /* ===== Gestión de proyectos informáticos (8) ===== */
+  { s: 1,
+    q: 'La Dirección de Tecnologías de la Información y Comunicación de un corporativo de telecomunicaciones en el ámbito nacional resolvió añadir acciones a la presentación de proyectos informáticos al involucrar un modelo para el análisis de interesados que permita agruparlos con base en su nivel de autoridad y participación. ¿Qué acción debe llevar a cabo para responder a las necesidades de los proyectos?',
+    o: ['Elaborar una matriz de poder e interés (autoridad y participación) para clasificar a los interesados y definir la estrategia de involucramiento de cada grupo.',
+        'Elaborar una matriz de trazabilidad de requisitos para vincular cada requisito con su entregable y con el interesado que lo solicitó.',
+        'Elaborar una matriz de asignación de responsabilidades (RACI) para definir quién ejecuta, aprueba, consulta e informa en cada entregable.'],
+    e: 'Agrupar interesados por autoridad (poder) y participación (interés) es el análisis con la matriz poder/interés de la gestión de interesados del PMBOK. La trazabilidad y la RACI se usan para otros fines.' },
+  { s: 1,
+    q: 'En el marco del PMBOK, un patrocinador desea que el proyecto de migración de servidores quede formalmente autorizado y que el gerente del proyecto cuente con la autoridad para aplicar recursos de la organización. ¿Qué documento debe emitirse?',
+    o: ['Acta de constitución del proyecto, emitida por el patrocinador, que autoriza formalmente el proyecto y otorga autoridad al gerente.',
+        'Plan para la dirección del proyecto, emitido por el gerente, que integra las líneas base y describe cómo se ejecutará el proyecto.',
+        'Enunciado del alcance del proyecto, emitido por el equipo, que describe los entregables y los criterios de aceptación.'],
+    e: 'El acta de constitución es el documento que autoriza formalmente el proyecto y da al gerente autoridad sobre los recursos. Se emite en el grupo de procesos de Inicio, antes de planificar.' },
+  { s: 1,
+    q: 'El gerente de un proyecto de desarrollo de un portal necesita dividir jerárquicamente el trabajo total del proyecto en componentes más pequeños y manejables, orientados a entregables, para estimar costos y asignar responsables. ¿Qué herramienta debe elaborar?',
+    o: ['Estructura de desglose del trabajo (EDT/WBS), que descompone el alcance en entregables de forma jerárquica.',
+        'Diagrama de Gantt, que muestra las actividades como barras ubicadas sobre una escala de tiempo.',
+        'Diccionario de la EDT, que describe en detalle cada componente de la EDT con sus criterios y recursos.'],
+    e: 'Descomponer jerárquicamente el alcance en entregables es la función de la EDT/WBS. El Gantt representa tiempos y el diccionario detalla componentes de una EDT que ya existe.' },
+  { s: 1,
+    q: 'Un gerente de proyecto elabora el diagrama de red del cronograma y debe determinar la duración mínima posible del proyecto. ¿Qué debe identificar?',
+    o: ['La ruta crítica: la secuencia más larga de actividades dependientes, con holgura total igual a cero.',
+        'La ruta crítica: la secuencia más corta de actividades dependientes, con holgura total igual a cero.',
+        'La ruta crítica: la secuencia más larga de actividades dependientes, con la mayor holgura total del diagrama.'],
+    e: 'La ruta crítica es la secuencia más larga y define la duración mínima del proyecto; sus actividades no tienen holgura (holgura cero), porque cualquier retraso impacta la fecha final.' },
+  { s: 1,
+    q: 'En un proyecto de implementación de un ERP, el gerente compara cada semana el avance real contra la línea base, analiza las variaciones y emite solicitudes de cambio cuando es necesario. ¿A qué grupo de procesos del PMBOK corresponde esta actividad?',
+    o: ['Monitoreo y control.',
+        'Ejecución.',
+        'Planificación.'],
+    e: 'Comparar el desempeño real contra la línea base, medir variaciones y solicitar cambios son procesos del grupo de Monitoreo y control. Ejecución realiza el trabajo y Planificación define las líneas base.' },
+  { s: 1,
+    q: 'Un proyecto informático tiene un valor planificado (PV) de $90,000, un valor ganado (EV) de $80,000 y un costo real (AC) de $100,000. Con la técnica del valor ganado, ¿cuál es su estado?',
+    o: ['CPI = 0.80 y SPI = 0.89: el proyecto tiene sobrecosto y va retrasado.',
+        'CPI = 1.25 y SPI = 1.13: el proyecto tiene ahorro y va adelantado.',
+        'CPI = 0.80 y SPI = 1.13: el proyecto tiene sobrecosto y va adelantado.'],
+    e: 'CPI = EV / AC = 80,000 / 100,000 = 0.80 (menor a 1: sobrecosto). SPI = EV / PV = 80,000 / 90,000 = 0.89 (menor a 1: retraso).' },
+  { s: 1,
+    q: 'En un proyecto de implementación de una red, existe el riesgo de que un proveedor entregue tarde los equipos. El gerente decide contratar al proveedor con una cláusula de penalización y una póliza de garantía, de modo que sea este quien asuma el impacto financiero. ¿Qué estrategia de respuesta al riesgo negativo aplicó?',
+    o: ['Transferir, porque el impacto del riesgo se traslada a un tercero mediante un contrato o una póliza.',
+        'Mitigar, porque se reduce la probabilidad o el impacto del riesgo mediante acciones preventivas internas.',
+        'Evitar, porque se elimina la causa del riesgo cambiando el plan del proyecto.'],
+    e: 'Trasladar el impacto a un tercero (seguro, garantía, contrato) es transferir. Mitigar reduce probabilidad o impacto sin trasladarlo, y evitar elimina la amenaza modificando el plan.' },
+  { s: 1,
+    q: 'Durante la ejecución de un proyecto de software, el cliente solicita agregar una funcionalidad que no estaba incluida en el alcance aprobado. De acuerdo con el control integrado de cambios del PMBOK, ¿qué debe hacer el gerente del proyecto?',
+    o: ['Registrar la solicitud y evaluar su impacto en alcance, tiempo y costo para presentarla al comité de control de cambios.',
+        'Registrar la solicitud y aprobarla directamente él mismo para no afectar la relación con el cliente ni el cronograma.',
+        'Registrar la solicitud y diferirla hasta el cierre para incluirla en el informe de lecciones aprendidas.'],
+    e: 'Todo cambio se registra, se evalúa su impacto y se somete a aprobación del comité de control de cambios antes de modificar las líneas base. Ni se aprueba de forma unilateral ni se ignora.' },
+
+  /* ===== Implementación de sistemas de información (10) ===== */
+  { s: 2,
+    q: 'Un área de ventas solicitó un sistema cuyos requerimientos cambian cada mes. Necesita ver avances funcionales cada dos semanas y retroalimentar al equipo de desarrollo de forma continua. ¿Qué enfoque de desarrollo es el más adecuado?',
+    o: ['Metodología ágil (por ejemplo, Scrum), con iteraciones cortas, entregas incrementales y retroalimentación frecuente.',
+        'Modelo en cascada, con fases secuenciales, entregas únicas al final y aprobación formal de cada fase.',
+        'Modelo en espiral, con ciclos de planeación orientados al análisis de riesgos y entregas espaciadas.'],
+    e: 'Requerimientos cambiantes y entregas cada dos semanas con retroalimentación continua describen un enfoque ágil con iteraciones (sprints). Cascada no admite cambios fáciles y espiral prioriza el riesgo.' },
+  { s: 2,
+    q: 'En la etapa de análisis de un sistema de reservaciones, el analista debe representar las funcionalidades del sistema desde la perspectiva de los usuarios y de los actores externos que interactúan con él. ¿Qué diagrama UML debe elaborar?',
+    o: ['Diagrama de casos de uso, que muestra actores y funcionalidades del sistema.',
+        'Diagrama de clases, que muestra la estructura estática de clases, atributos y relaciones.',
+        'Diagrama de secuencia, que muestra el intercambio de mensajes entre objetos en orden temporal.'],
+    e: 'El diagrama de casos de uso representa quién interactúa con el sistema (actores) y qué funcionalidades obtiene. Las clases muestran estructura y la secuencia muestra el orden de los mensajes.' },
+  { s: 2,
+    q: 'Al diseñar la base de datos de una tienda, se detecta que en la tabla Pedido el atributo «nombre_cliente» depende del atributo «id_cliente», que no es la clave primaria, sino otro atributo común de la tabla. Para eliminar esta dependencia, ¿qué forma normal debe aplicarse?',
+    o: ['Tercera forma normal (3FN), que elimina las dependencias transitivas entre atributos no clave.',
+        'Segunda forma normal (2FN), que elimina las dependencias parciales respecto de una clave compuesta.',
+        'Primera forma normal (1FN), que elimina los grupos repetitivos y garantiza valores atómicos.'],
+    e: 'Un atributo no clave que depende de otro atributo no clave es una dependencia transitiva, que se elimina en 3FN. La 2FN trata dependencias parciales de una clave compuesta y la 1FN, grupos repetitivos.' },
+  { s: 2,
+    q: 'Se requiere una consulta que muestre todos los clientes junto con sus pedidos, incluyendo a los clientes que aún no han realizado ninguno. ¿Qué sentencia SQL es la adecuada?',
+    o: ['<code>SELECT c.nombre, p.folio FROM clientes c LEFT JOIN pedidos p ON c.id = p.id_cliente;</code>',
+        '<code>SELECT c.nombre, p.folio FROM clientes c INNER JOIN pedidos p ON c.id = p.id_cliente;</code>',
+        '<code>SELECT c.nombre, p.folio FROM clientes c RIGHT JOIN pedidos p ON c.id = p.id_cliente;</code>'],
+    e: 'LEFT JOIN conserva todas las filas de la tabla izquierda (clientes), aun sin coincidencia. INNER JOIN solo devuelve coincidencias y RIGHT JOIN conserva todos los pedidos.' },
+  { s: 2,
+    q: 'Un equipo de desarrollo debe verificar que el módulo de inventario y el módulo de facturación intercambien correctamente los datos a través de su interfaz, una vez que ambos ya pasaron sus pruebas individuales. ¿Qué tipo de prueba debe aplicar?',
+    o: ['Pruebas de integración, que verifican la interacción entre módulos ya probados.',
+        'Pruebas unitarias, que verifican cada componente de forma aislada.',
+        'Pruebas de aceptación, que validan con el usuario que el sistema cumple sus requerimientos.'],
+    e: 'Comprobar el intercambio de datos entre módulos que ya se probaron por separado es el objetivo de las pruebas de integración.' },
+  { s: 2,
+    q: 'Una empresa reemplazará su sistema contable. Para reducir el riesgo de la implantación, decide mantener el sistema anterior y el nuevo funcionando al mismo tiempo durante un mes, comparando los resultados hasta validar que son consistentes. ¿Qué estrategia de conversión aplica?',
+    o: ['Conversión en paralelo, donde ambos sistemas operan simultáneamente durante un periodo de validación.',
+        'Conversión directa, donde el nuevo sistema sustituye al anterior en una fecha definida.',
+        'Conversión piloto, donde el nuevo sistema se implanta primero en un área o sucursal.'],
+    e: 'Operar ambos sistemas a la vez para comparar resultados es conversión en paralelo. La directa sustituye de golpe y la piloto limita la implantación a una sola área.' },
+  { s: 2,
+    q: 'Un equipo diseña una aplicación web con una arquitectura donde un componente recibe las solicitudes del usuario, actualiza los datos y selecciona la presentación que se mostrará, mientras que la lógica de negocio y la interfaz permanecen separadas. ¿Qué patrón arquitectónico describe esta organización?',
+    o: ['Modelo-Vista-Controlador (MVC), donde el controlador coordina al modelo y a la vista.',
+        'Singleton, donde una clase restringe la creación de objetos a una única instancia.',
+        'Observer, donde un objeto notifica automáticamente a otros cuando cambia su estado.'],
+    e: 'MVC separa datos y lógica (modelo), presentación (vista) y la coordinación de solicitudes (controlador). Singleton y Observer son patrones de diseño con otros propósitos.' },
+  { s: 2,
+    q: 'Una vez que un usuario ingresa su usuario y contraseña, el sistema verifica su identidad y después determina a qué módulos y operaciones tiene permitido acceder según su perfil. ¿Cómo se denomina el mecanismo que define a qué puede acceder?',
+    o: ['Autorización, que define los permisos del usuario ya identificado.',
+        'Autenticación, que verifica la identidad declarada por el usuario.',
+        'Auditoría, que registra las acciones realizadas por el usuario en el sistema.'],
+    e: 'La autenticación comprueba quién es el usuario; la autorización decide qué puede hacer; la auditoría registra lo que hizo.' },
+  { s: 2,
+    q: 'Debido a un cambio en la normatividad fiscal, un sistema de facturación ya implantado debe modificarse para generar los comprobantes con el nuevo formato exigido por la autoridad. ¿Qué tipo de mantenimiento se está realizando?',
+    o: ['Adaptativo, porque se ajusta el sistema a cambios en su entorno, como la normatividad o la plataforma.',
+        'Correctivo, porque se reparan defectos detectados durante la operación del sistema.',
+        'Perfectivo, porque se mejoran el desempeño o las funciones sin que el entorno haya cambiado.'],
+    e: 'Un cambio externo (normatividad) que obliga a modificar el sistema es mantenimiento adaptativo. El correctivo repara errores y el perfectivo mejora sin un cambio de entorno.' },
+  { s: 2,
+    q: 'Un probador evalúa un módulo de cálculo de nómina proporcionando entradas y comparando las salidas con los resultados esperados, sin conocer ni revisar el código interno del módulo. ¿Qué técnica de prueba utiliza?',
+    o: ['Prueba de caja negra, que valida entradas y salidas sin considerar la estructura interna.',
+        'Prueba de caja blanca, que examina la estructura interna, las rutas y las condiciones del código.',
+        'Prueba de regresión, que vuelve a ejecutar casos tras un cambio para detectar efectos no deseados.'],
+    e: 'Evaluar entradas y salidas sin ver el código es caja negra. La caja blanca requiere conocer la estructura interna y la regresión se aplica después de modificaciones.' },
+
+  /* ===== Función informática (7) ===== */
+  { s: 3,
+    q: 'El servicio de correo electrónico de una empresa dejó de funcionar. La mesa de servicio aplica una solución temporal para reanudar la operación de los usuarios lo antes posible, sin investigar todavía el origen de la falla. De acuerdo con ITIL, ¿qué práctica se está aplicando?',
+    o: ['Gestión de incidentes, que busca restaurar la operación normal del servicio lo más rápido posible.',
+        'Gestión de problemas, que busca identificar la causa raíz de los incidentes para evitar que se repitan.',
+        'Gestión de cambios, que busca controlar el ciclo de vida de los cambios para minimizar su riesgo.'],
+    e: 'Restaurar el servicio cuanto antes, aunque sea con una solución temporal, es gestión de incidentes. Buscar la causa raíz es gestión de problemas, y controlar modificaciones es gestión de cambios.' },
+  { s: 3,
+    q: 'Una organización que aplica el ciclo de vida de ITIL requiere definir cómo se pasarán a producción un nuevo servicio y sus cambios, coordinando pruebas, liberación y despliegue con el menor riesgo posible. ¿A qué etapa del ciclo de vida corresponde esta actividad?',
+    o: ['Transición del servicio.',
+        'Diseño del servicio.',
+        'Operación del servicio.'],
+    e: 'Llevar servicios nuevos o modificados al ambiente productivo (pruebas, liberación, despliegue) es la etapa de Transición del servicio. Diseño define cómo será el servicio y Operación lo ejecuta día a día.' },
+  { s: 3,
+    q: 'El área de informática de un hospital formaliza con el área de urgencias un documento que establece la disponibilidad mínima del sistema de expedientes (99.5 %), los tiempos de respuesta ante fallas y las responsabilidades de ambas partes. En el vocabulario de ITIL, ¿cómo se denomina este documento?',
+    o: ['SLA (acuerdo de nivel de servicio), entre el proveedor del servicio y el cliente.',
+        'OLA (acuerdo de nivel operativo), entre áreas internas del propio proveedor del servicio.',
+        'UC (contrato de soporte), entre el proveedor del servicio y un proveedor externo.'],
+    e: 'El SLA formaliza los niveles de servicio acordados entre el proveedor de TI y su cliente. El OLA es interno entre áreas del proveedor y el contrato de soporte es con un tercero externo.' },
+  { s: 3,
+    q: 'La dirección de una empresa requiere un marco de referencia para el gobierno y la gestión de las TI empresariales, que alinee la tecnología con los objetivos del negocio y organice sus objetivos en dominios como Evaluar, Dirigir y Monitorear (EDM) y Alinear, Planificar y Organizar (APO). ¿Qué marco corresponde?',
+    o: ['COBIT, marco de gobierno y gestión de las TI de la empresa.',
+        'ITIL, conjunto de buenas prácticas para la gestión de servicios de TI.',
+        'ISO/IEC 27001, norma para establecer un sistema de gestión de seguridad de la información.'],
+    e: 'Los dominios EDM, APO, BAI, DSS y MEA pertenecen a COBIT 2019. ITIL se centra en servicios de TI e ISO/IEC 27001 en seguridad de la información.' },
+  { s: 3,
+    q: 'En COBIT 2019, la gestión de la mesa de servicio, de los incidentes y de la continuidad operativa de los servicios de TI se ubica en el dominio:',
+    o: ['DSS (Entregar, Dar Servicio y Soporte).',
+        'BAI (Construir, Adquirir e Implementar).',
+        'MEA (Monitorear, Evaluar y Valorar).'],
+    e: 'DSS agrupa la operación y el soporte de los servicios: mesa de servicio, incidentes, problemas y continuidad. BAI cubre la construcción e implementación de soluciones y MEA el monitoreo del desempeño y la conformidad.' },
+  { s: 3,
+    q: 'Una organización requiere un puesto que establezca la política y los controles de seguridad de la información para toda la empresa, dé seguimiento a los riesgos de seguridad y reporte directamente a la alta dirección. ¿Qué rol de la función informática debe crear?',
+    o: ['Responsable de seguridad de la información (CISO).',
+        'Director de informática (CIO), que alinea la estrategia de TI con la del negocio.',
+        'Administrador de bases de datos (DBA), que asegura la disponibilidad e integridad de los datos.'],
+    e: 'El CISO es el responsable de definir y supervisar la seguridad de la información en toda la organización. El CIO alinea TI con el negocio y el DBA administra las bases de datos.' },
+  { s: 3,
+    q: 'El administrador de respaldos de una empresa desea que, para restaurar la información, solo se requiera el último respaldo completo y el último respaldo de la serie, aunque cada respaldo ocupe más espacio conforme pasan los días. ¿Qué tipo de respaldo debe programar?',
+    o: ['Diferencial, que copia lo que cambió desde el último respaldo completo.',
+        'Incremental, que copia lo que cambió desde el último respaldo de cualquier tipo.',
+        'Completo, que copia la totalidad de la información en cada ocasión.'],
+    e: 'El respaldo diferencial acumula los cambios desde el último completo, por lo que restaurar requiere solo dos juegos. El incremental exige el completo y todos los incrementales, y el completo copia todo cada vez.' }
+];
+
+const KEY = 'egel-informatica-v1';
+const app = document.getElementById('app');
+const who = document.getElementById('who');
+const LET = ['A', 'B', 'C'];
+let S = null;          // intento actual
+let view = 'welcome';  // welcome | quiz | results
+let confirmMode = null; // 'finish' | 'restart' | null
+
+const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const loadSaved = () => { try { const r = JSON.parse(localStorage.getItem(KEY)); return r && r.perms && r.perms.length === Q.length ? r : null; } catch (e) { return null; } };
+const wipe = () => { try { localStorage.removeItem(KEY); } catch (e) {} };
+const answered = () => S.answers.filter(a => a !== null).length;
+const optText = (i, k) => Q[i].o[S.perms[i][k]];
+
+function newAttempt(name) {
+  S = { name, perms: Q.map(() => shuffle([0, 1, 2])), answers: Q.map(() => null), idx: 0, finished: false };
+  confirmMode = null; view = 'quiz'; save(); render(); toTop();
+}
+function toTop() { try { window.scrollTo(0, 0); } catch (e) {} }
+
+function render() {
+  who.innerHTML = S && view !== 'welcome' ? 'Alumno: <strong>' + esc(S.name) + '</strong>' : '';
+  if (view === 'welcome') return renderWelcome();
+  if (view === 'quiz') return renderQuiz();
+  renderResults();
+}
+
+function renderWelcome() {
+  const saved = loadSaved();
+  const secs = SECTIONS.map(s => '<div class="secitem" style="--sc:' + s.c + '"><b>' + s.n + '</b><span>' + esc(s.short) + '</span></div>').join('');
+  let resume = '';
+  if (saved) {
+    const n = saved.answers.filter(a => a !== null).length;
+    resume = '<div class="resume"><p>' + (saved.finished ? 'Tienes un intento terminado de ' : 'Tienes un intento en curso de ') + '<strong>' + esc(saved.name) + '</strong> (' + n + ' de ' + Q.length + ' respondidas).</p>' +
+      '<div class="row"><button class="btn primary" data-a="resume">' + (saved.finished ? 'Ver resultados' : 'Continuar') + '</button></div></div>';
+  }
+  app.innerHTML = '<section class="card hero"><h1>Entrenador EGEL Informática</h1>' +
+    '<p class="lead">' + Q.length + ' reactivos de práctica con tres opciones muy parecidas, distribuidos como en el examen. Al terminar verás tus aciertos por sección y solo las preguntas que fallaste, con su explicación.</p>' +
+    '<div class="secgrid">' + secs + '</div>' + resume +
+    '<form class="field" id="nameForm" autocomplete="off"><label for="nameInput">¿Cómo te llamas?</label>' +
+    '<input id="nameInput" type="text" maxlength="60" placeholder="Nombre y apellido" value="' + esc(saved ? saved.name : '') + '">' +
+    '<div class="row" style="margin-top:8px"><button class="btn primary" id="startBtn" type="submit">' + (saved ? 'Iniciar de nuevo' : 'Comenzar') + '</button></div></form></section>';
+  const inp = document.getElementById('nameInput'), btn = document.getElementById('startBtn');
+  const sync = () => { btn.disabled = !inp.value.trim(); };
+  inp.addEventListener('input', sync); sync();
+  document.getElementById('nameForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const n = inp.value.trim();
+    if (n) newAttempt(n);
+  });
+}
+
+function renderQuiz() {
+  const i = S.idx, q = Q[i], sec = SECTIONS[q.s], done = answered(), pct = Math.round(done / Q.length * 100);
+  const opts = [0, 1, 2].map(k => '<button class="opt" role="radio" aria-checked="' + (S.answers[i] === S.perms[i][k]) + '" data-a="pick" data-k="' + k + '">' +
+    '<span class="ltr">' + LET[k] + '</span><span class="txt">' + optText(i, k) + '</span></button>').join('');
+
+  let bar = '';
+  if (confirmMode === 'finish') {
+    const left = Q.length - done;
+    bar = '<div class="confirm" role="alert"><p>' + (left ? 'Te faltan <strong>' + left + '</strong> pregunta' + (left > 1 ? 's' : '') + ' por responder y contarán como incorrectas. ' : '') + '¿Terminar el examen y ver los resultados?</p>' +
+      '<div class="row"><button class="btn primary" data-a="finish">Sí, terminar</button><button class="btn" data-a="cancel">Seguir respondiendo</button></div></div>';
+  } else if (confirmMode === 'restart') {
+    bar = '<div class="confirm" role="alert"><p>Se borrarán tus respuestas y las opciones se mezclarán de nuevo. ¿Iniciar de nuevo?</p>' +
+      '<div class="row"><button class="btn danger" data-a="restart">Sí, iniciar de nuevo</button><button class="btn" data-a="cancel">Cancelar</button></div></div>';
+  }
+
+  const map = SECTIONS.map((s, si) => {
+    const dots = Q.map((x, qi) => x.s === si ? '<button class="dot' + (S.answers[qi] !== null ? ' done' : '') + (qi === i ? ' cur' : '') + '" data-a="go" data-i="' + qi + '" aria-label="Pregunta ' + (qi + 1) + (S.answers[qi] !== null ? ', respondida' : '') + '"' + (qi === i ? ' aria-current="true"' : '') + '>' + (qi + 1) + '</button>' : '').join('');
+    return '<div class="maprow" style="--sc:' + s.c + '"><span class="lab">' + esc(s.short) + '</span><div class="dots">' + dots + '</div></div>';
+  }).join('');
+
+  app.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px">' +
+    '<div class="progress"><div class="meta"><span>Respondidas ' + done + ' / ' + Q.length + '</span><span>' + pct + ' %</span></div><div class="bar"><i style="width:' + pct + '%"></i></div></div>' +
+    '<section class="card" aria-live="polite"><div class="qhead"><span class="chip" style="--sc:' + sec.c + '">' + esc(sec.name) + '</span><span class="qnum">Pregunta ' + (i + 1) + ' de ' + Q.length + '</span></div>' +
+    '<p class="qtext">' + q.q + '</p><div class="opts" role="radiogroup" aria-label="Opciones de respuesta">' + opts + '</div></section>' +
+    '<div class="row between"><button class="btn" data-a="prev"' + (i === 0 ? ' disabled' : '') + '>← Anterior</button>' +
+    '<button class="btn" data-a="next"' + (i === Q.length - 1 ? ' disabled' : '') + '>Siguiente →</button></div>' +
+    bar +
+    '<section class="card map"><h3>Mapa de preguntas</h3>' + map + '</section>' +
+    '<div class="row between"><button class="btn" data-a="askRestart">Iniciar de nuevo</button><button class="btn primary" data-a="askFinish">Terminar examen</button></div></div>';
+}
+
+function results() {
+  const ok = SECTIONS.map(() => 0), tot = SECTIONS.map(() => 0), wrong = [];
+  Q.forEach((q, i) => { tot[q.s]++; if (S.answers[i] === 0) ok[q.s]++; else wrong.push(i); });
+  return { ok, tot, wrong, total: ok.reduce((a, b) => a + b, 0) };
+}
+function level(p) { return p >= 70 ? ['good', 'Sólido'] : p >= 50 ? ['mid', 'En desarrollo'] : ['low', 'Por reforzar']; }
+
+function renderResults() {
+  const r = results(), pct = Math.round(r.total / Q.length * 100);
+  const rows = SECTIONS.map((s, si) => {
+    const p = Math.round(r.ok[si] / r.tot[si] * 100), l = level(p);
+    return '<tr><td><span class="chip" style="--sc:' + s.c + '">' + esc(s.name) + '</span></td><td class="num">' + r.ok[si] + '</td><td class="num">' + r.tot[si] + '</td><td class="num">' + p + ' %</td>' +
+      '<td><span class="meter" aria-hidden="true"><i style="width:' + p + '%;background:var(--' + (l[0] === 'good' ? 'ok' : l[0] === 'mid' ? 'warn' : 'bad') + ')"></i></span></td><td><span class="lvl ' + l[0] + '">' + l[1] + '</span></td></tr>';
+  }).join('');
+  const tl = level(pct);
+  const table = '<div class="tablewrap"><table><thead><tr><th>Sección</th><th class="num">Correctas</th><th class="num">Reactivos</th><th class="num">Porcentaje</th><th></th><th>Nivel</th></tr></thead><tbody>' + rows +
+    '<tr class="total"><td>Total</td><td class="num">' + r.total + '</td><td class="num">' + Q.length + '</td><td class="num">' + pct + ' %</td><td></td><td><span class="lvl ' + tl[0] + '">' + tl[1] + '</span></td></tr></tbody></table></div>' +
+    '<p class="note">Nivel de referencia para estudio: Sólido desde 70 %, En desarrollo de 50 a 69 %, Por reforzar por debajo de 50 %. No equivale al puntaje oficial del CENEVAL.</p>';
+
+  let review;
+  if (!r.wrong.length) {
+    review = '<div class="card empty">Respondiste todo correctamente, ' + esc(S.name) + '. No hay preguntas para repasar.</div>';
+  } else {
+    review = r.wrong.map(i => {
+      const q = Q[i], sec = SECTIONS[q.s], mine = S.answers[i];
+      return '<article class="card rcard" style="--sc:' + sec.c + '"><div class="qhead"><span class="chip" style="--sc:' + sec.c + '">' + esc(sec.name) + '</span><span class="qnum">Pregunta ' + (i + 1) + '</span></div>' +
+        '<p class="qtext">' + q.q + '</p>' +
+        '<div class="ans bad"><span class="tag">Tu respuesta</span><span>' + (mine === null ? 'Sin responder' : q.o[mine]) + '</span></div>' +
+        '<div class="ans good"><span class="tag">Correcta</span><span>' + q.o[0] + '</span></div>' +
+        '<p class="why"><b>Por qué:</b> ' + esc(q.e) + '</p></article>';
+    }).join('');
+  }
+
+  app.innerHTML = '<div style="display:flex;flex-direction:column;gap:16px">' +
+    '<section class="card"><p class="brand">Resultados de ' + esc(S.name) + '</p><div class="score"><span class="big">' + r.total + ' / ' + Q.length + '</span><span class="pct">' + pct + ' % de aciertos</span></div>' + table + '</section>' +
+    '<div class="row"><button class="btn primary" data-a="restart">Iniciar de nuevo</button><button class="btn" data-a="rename">Cambiar nombre</button></div>' +
+    '<h2 style="font-size:20px;margin-top:8px">Preguntas por repasar (' + r.wrong.length + ')</h2>' +
+    '<div class="review">' + review + '</div>' +
+    '<div class="row"><button class="btn primary" data-a="restart">Iniciar de nuevo</button></div></div>';
+}
+
+function go(n) { S.idx = Math.max(0, Math.min(Q.length - 1, n)); confirmMode = null; save(); render(); toTop(); }
+
+app.addEventListener('click', e => {
+  const b = e.target.closest('[data-a]');
+  if (!b || b.disabled) return;
+  const a = b.dataset.a;
+  if (a === 'pick') { S.answers[S.idx] = S.perms[S.idx][+b.dataset.k]; save(); render(); }
+  else if (a === 'prev') go(S.idx - 1);
+  else if (a === 'next') go(S.idx + 1);
+  else if (a === 'go') go(+b.dataset.i);
+  else if (a === 'askFinish') { confirmMode = 'finish'; render(); }
+  else if (a === 'askRestart') { confirmMode = 'restart'; render(); }
+  else if (a === 'cancel') { confirmMode = null; render(); }
+  else if (a === 'finish') { S.finished = true; confirmMode = null; view = 'results'; save(); render(); toTop(); }
+  else if (a === 'restart') newAttempt(S.name);
+  else if (a === 'rename') { view = 'welcome'; render(); toTop(); }
+  else if (a === 'resume') { S = loadSaved(); view = S.finished ? 'results' : 'quiz'; render(); toTop(); }
+});
+
+document.addEventListener('keydown', e => {
+  if (view !== 'quiz' || !S || e.target.closest('input') || e.ctrlKey || e.metaKey || e.altKey) return;
+  if (e.key === 'ArrowRight') go(S.idx + 1);
+  else if (e.key === 'ArrowLeft') go(S.idx - 1);
+  else if ('abc'.includes(e.key.toLowerCase()) && e.key.length === 1 || ['1', '2', '3'].includes(e.key)) {
+    const k = ['a', 'b', 'c'].indexOf(e.key.toLowerCase()); const kk = k >= 0 ? k : +e.key - 1;
+    S.answers[S.idx] = S.perms[S.idx][kk]; save(); render();
+  }
+});
+
+render();
+</script>
+</body>
+</html>
