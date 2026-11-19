@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Simulacro EGEL Informática</title>
+<title>Simulacro EGEL Informática Avanzado</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:wght@400;600&display=swap">
@@ -63,7 +63,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .row.between { justify-content: space-between; }
 
-
+/* Bienvenida */
 .hero { border-top: 8px solid var(--accent); }
 .hero h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 600; }
 .hero .lead { color: var(--muted); max-width: 62ch; margin-top: 10px; }
@@ -89,6 +89,12 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .case { background: var(--tint); border-left: 8px solid var(--accent); border-radius: 0 8px 8px 0; padding: 16px 20px; margin-bottom: 20px; font-family: var(--font-read); font-size: 17px; line-height: 1.7; display: flex; flex-direction: column; gap: 10px; }
 .case .ct { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; font-weight: 600; }
 .qtext { font-size: 18px; line-height: 1.6; max-width: 72ch; font-weight: 500; }
+
+.case pre, .qtext pre { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: #fff; border: 1.5px solid #000; border-radius: 6px; padding: 10px 12px; margin: 10px 0; overflow-x: auto; white-space: pre; font-weight: 400; }
+.case .tw, .qtext .tw { overflow-x: auto; margin: 10px 0; }
+.case table, .qtext table { min-width: 0; width: auto; font-family: var(--font-body); font-size: 14px; font-weight: 400; background: #fff; }
+.case th, .case td, .qtext th, .qtext td { padding: 6px 12px; border: 1.5px solid #000; text-align: left; }
+.case th, .qtext th { font-size: 12px; }
 code { font-family: var(--font-mono); font-size: .88em; background: rgba(0,0,0,.07); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
 .opts { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
 .opt { display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%; background: #fff; border: 1.5px solid #000; border-radius: 8px; padding: 14px 16px; }
@@ -118,7 +124,7 @@ code { font-family: var(--font-mono); font-size: .88em; background: rgba(0,0,0,.
 .confirm { border: 3px solid var(--accent); border-radius: 8px; padding: 14px 16px; background: var(--tint); display: flex; flex-direction: column; gap: 12px; }
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(20px + env(safe-area-inset-bottom, 0px)); background: #000; color: #fff; border-left: 8px solid var(--accent); padding: 12px 18px; border-radius: 8px; z-index: 40; max-width: calc(100vw - 32px); font-weight: 500; }
 
-
+/* Resultados */
 .score { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
 .score .big { font-family: var(--font-mono); font-size: clamp(40px, 8vw, 64px); font-weight: 600; line-height: 1; background: linear-gradient(transparent 70%, var(--accent) 70%); }
 .score .pct { font-size: 18px; color: var(--muted); }
@@ -178,241 +184,258 @@ const AREAS = [
 ];
 
 const CASES = {
-  A: { t: 'Clínica Santa Aurora', p: [
-    `La Clínica Santa Aurora, un hospital privado con tres sedes en Quintana Roo, registra las citas y los expedientes en hojas de cálculo que cada sede mantiene por separado. La facturación se realiza con un programa instalado en una sola computadora de escritorio.`,
-    `Los médicos se quejan de que no pueden consultar el expediente de un paciente que fue atendido en otra sede. En el último año se perdieron dos meses de facturación por la falla de un disco duro sin respaldo. Además, la autoridad sanitaria exige que los expedientes clínicos electrónicos conserven un registro de quién los consultó o modificó, y cuándo.`,
-    `La dirección cuenta con poco presupuesto para inversión inicial, pero puede pagar una cuota mensual. La clínica no tiene personal que administre servidores ni almacenamiento.`] },
-  B: { t: 'Ferretería La Plomada', p: [
-    `Ferretería La Plomada tiene 14 sucursales. Para definir el nuevo sistema, el analista entrevistó a tres gerentes. El de compras dijo: «el sistema debe sugerir los pedidos a proveedores automáticamente». El de ventas dijo: «lo más urgente es que el cajero no tenga que capturar dos veces el mismo ticket». El de almacén dijo: «nunca sabemos qué hay realmente en los estantes, porque el sistema dice una cosa y el conteo físico otra».`,
-    `Más tarde, el analista observó el trabajo en una sucursal y comprobó que el cajero registra la venta en el punto de venta y, al terminar su turno, vuelve a capturar los artículos vendidos en una hoja de inventario. El inventario del sistema se actualiza una sola vez, al cierre del día. La dirección solo puede financiar una primera fase de tres meses.`] },
-  C: { t: 'Portal de trámites del municipio', p: [
-    `El municipio de Isla Blanca contrató a una empresa para desarrollar un portal de trámites ciudadanos. En la reunión de arranque, el secretario de Innovación (patrocinador) pidió «un portal donde los ciudadanos hagan trámites y pagos en línea». El gerente del proyecto elaboró con su equipo la estructura de desglose del trabajo (EDT), un cronograma de seis meses y un presupuesto de $2,400,000.`,
-    `En el mes tres, el área jurídica informa que, por ley, los trámites deberán firmarse con firma electrónica avanzada, algo que no se consideró. Integrarla requeriría cinco semanas adicionales y $350,000. El presupuesto solo puede ampliarse con la aprobación del comité de finanzas. Además, el director de comunicación social, a quien nadie había identificado como interesado, advierte que bloqueará la publicación del portal si no se incluye una campaña de difusión que él coordine.`] },
-  D: { t: 'Aplicación de crédito con Scrum', p: [
-    `Una empresa de tecnología financiera desarrolla una aplicación de crédito con Scrum, con sprints de dos semanas. El equipo tiene una velocidad promedio de 30 puntos de historia por sprint. El backlog del producto restante suma 180 puntos y la dirección desea lanzar la aplicación dentro de cinco sprints.`,
-    `En el sprint 4, el Product Owner cambió dos veces las prioridades con el sprint ya iniciado y el equipo dejó sin terminar 5 de las 12 historias comprometidas. El Scrum Master también observó que, en las reuniones diarias, se discuten soluciones técnicas durante largos periodos y que los desarrolladores aceptan historias sin criterios de aceptación.`] },
-  E: { t: 'Gimnasios Pulso', p: [
-    `La cadena de gimnasios Pulso requiere una base de datos relacional para su sistema de membresías. Las reglas del negocio son las siguientes: un socio puede tener varias membresías a lo largo del tiempo, pero solo una vigente a la vez, y debe conservarse el historial de las anteriores. Cada membresía corresponde a un plan (mensual, anual o VIP) con su costo.`,
-    `Un socio puede reservar muchas clases y cada clase recibe a muchos socios, hasta un cupo máximo. Cada clase la imparte un instructor en una sucursal. Las tablas principales son: instructor(id, nombre), sucursal(id, nombre), clase(id, id_instructor, id_sucursal, cupo) y reserva(id, id_clase, id_socio).`] },
-  F: { t: 'Tienda en línea Café Tulum', p: [
-    `Después de liberar la versión 2.3 de la tienda en línea de Café Tulum, el equipo de soporte detectó tres problemas. Primero, un cliente pudo ver el historial de compras de otra persona al cambiar el número en la dirección web, de /pedido?id=1042 a /pedido?id=1043. Segundo, al escribir <code>' OR '1'='1</code> en el campo de búsqueda, el sitio mostró todos los productos, incluidos los descontinuados.`,
-    `Tercero, el cálculo de envío gratuito para compras de más de $800, que funcionaba en la versión 2.2, dejó de funcionar. Antes de la liberación, el equipo solo había hecho pruebas funcionales manuales sobre las características nuevas.`] },
-  G: { t: 'Aseguradora Peninsular', p: [
-    `Aseguradora Peninsular recibe quejas frecuentes de sus agentes: el portal de ventas se cae durante 20 a 40 minutos casi cada semana. La mesa de servicio registra cada caída como incidente y reinicia el servicio. El tiempo promedio de resolución es de 25 minutos, dentro del acuerdo de nivel de servicio (SLA) de 60 minutos. Sin embargo, en el último trimestre se registraron 14 incidentes con el mismo síntoma y los agentes perdieron ventas.`,
-    `Una auditoría interna encontró que: (a) nadie es responsable de analizar la causa de los incidentes que se repiten; (b) el desarrollador instala los cambios del portal directamente en producción, sin autorización documentada; y (c) el Comité de TI no recibe indicadores del desempeño de los servicios. El Director General quiere que TI esté alineada con los objetivos del negocio.`] }
+  A: { t: 'Distribuidora Caribe (base de datos)', p: [
+    `Distribuidora Caribe vende abarrotes a tiendas de la península. Su base de datos relacional, con más de 40 millones de pedidos históricos, tiene las siguientes tablas (el primer campo de cada una es su llave primaria; en detalle_pedido la llave es la combinación de los dos primeros):`,
+    `<pre>cliente(id_cliente, nombre, ciudad)
+pedido(id_pedido, id_cliente, fecha, estatus)
+detalle_pedido(id_pedido, id_producto, cantidad, precio_unitario)
+producto(id_producto, nombre, categoria, existencia)</pre>`,
+    `El estatus de un pedido puede ser «Capturado», «Entregado» o «Cancelado». La dirección comercial solicita varios análisis y el equipo de TI debe construir las consultas y atender los problemas de rendimiento de la base.`] },
+  B: { t: 'Campus de la Universidad Ítaca (redes)', p: [
+    `La Universidad Ítaca asignó el bloque 10.20.0.0/22 para su campus. Se requieren cuatro subredes: Administrativos (200 equipos), Docentes (100 equipos), Laboratorios (50 equipos) y un enlace punto a punto entre dos routers (2 direcciones). El plan es asignarlas con VLSM, de mayor a menor tamaño, sin traslape.`,
+    `El campus tiene dos switches de acceso, SW1 y SW2, conectados entre sí por un solo enlace. Cada switch tiene equipos de la VLAN 10 (Administrativos) y de la VLAN 20 (Docentes). Un router con una interfaz por VLAN enruta entre ellas y un firewall protege el servidor de expedientes escolares, con dirección 10.20.0.50, ubicado en la VLAN 10.`] },
+  C: { t: 'Plataforma de entregas Ruta Viva', p: [
+    `Ruta Viva es una plataforma de entregas a domicilio construida como una sola aplicación monolítica (un único artefacto que se despliega completo) con una base de datos central. Incluye los módulos de pedidos, pagos, facturación y rastreo de repartidores en tiempo real. Cualquier cambio, por pequeño que sea, exige liberar toda la aplicación y detener el servicio unos 20 minutos.`,
+    `En horas pico, el módulo de rastreo, que recibe la ubicación de miles de repartidores cada pocos segundos, consume casi toda la CPU del servidor y ralentiza el módulo de pagos. El equipo es de ocho desarrolladores, la empresa no puede detener operaciones durante semanas y se prevé integrar varios proveedores de pago en los próximos meses.`] },
+  D: { t: 'Migración del ERP de Textiles del Sur', p: [
+    `Textiles del Sur migrará su ERP a la nube en un proyecto de 12 meses con un presupuesto total (BAC) de $1,200,000. Al cierre del mes 5, el gerente del proyecto presenta este reporte:`,
+    `<div class="tw"><table><thead><tr><th>Indicador</th><th>Monto</th></tr></thead><tbody><tr><td>Valor planificado (PV)</td><td>$500,000</td></tr><tr><td>Valor ganado (EV)</td><td>$420,000</td></tr><tr><td>Costo real (AC)</td><td>$480,000</td></tr></tbody></table></div>`,
+    `El registro de riesgos incluye tres amenazas con su impacto ya estimado en costo:`,
+    `<div class="tw"><table><thead><tr><th>Riesgo</th><th>Probabilidad</th><th>Impacto</th></tr></thead><tbody><tr><td>R1. Retraso del proveedor de licencias</td><td>70 %</td><td>$50,000</td></tr><tr><td>R2. Pérdida de datos durante la migración</td><td>20 %</td><td>$400,000</td></tr><tr><td>R3. Resistencia al cambio de usuarios clave</td><td>50 %</td><td>$120,000</td></tr></tbody></table></div>`] },
+  E: { t: 'Mesa de servicio de Grupo Nauhtli', p: [
+    `La mesa de servicio de Grupo Nauhtli (1,200 empleados) opera de lunes a viernes de 8:00 a 20:00, y los tiempos del acuerdo de nivel de servicio (SLA) se cuentan solo dentro de ese horario. La prioridad de cada ticket se determina con esta matriz de impacto y urgencia. Los tiempos objetivo de resolución son: P1, 4 horas; P2, 8 horas; P3, 24 horas; P4, 48 horas.`,
+    `<div class="tw"><table><thead><tr><th></th><th>Urgencia alta</th><th>Urgencia media</th><th>Urgencia baja</th></tr></thead><tbody><tr><td>Impacto alto</td><td>P1</td><td>P2</td><td>P3</td></tr><tr><td>Impacto medio</td><td>P2</td><td>P3</td><td>P4</td></tr><tr><td>Impacto bajo</td><td>P3</td><td>P4</td><td>P4</td></tr></tbody></table></div>`,
+    `Entre las 9:00 y las 9:30 de hoy llegaron los siguientes reportes:`,
+    `<div class="tw"><table><thead><tr><th>Ticket</th><th>Reporte</th><th>Impacto</th><th>Urgencia</th></tr></thead><tbody><tr><td>T1</td><td>«No puedo imprimir; hay otra impresora disponible en el piso.»</td><td>Bajo</td><td>Baja</td></tr><tr><td>T2</td><td>«El ERP no permite facturar en la sucursal Cancún (40 usuarios) y hoy es el cierre de mes.»</td><td>Alto</td><td>Alta</td></tr><tr><td>T3</td><td>«La VPN falla a un directivo que viaja y mañana presenta resultados a inversionistas.»</td><td>Bajo</td><td>Alta</td></tr><tr><td>T4</td><td>«La aplicación de nómina falla en Recursos Humanos (6 usuarios) y la dispersión de nómina es mañana.»</td><td>Medio</td><td>Alta</td></tr></tbody></table></div>`] }
 };
+ 
+const Q = [ 
+  { a: 0, q: `Una sucursal con 80 empleados contratará un enlace a Internet. Se estima que 25 % de los empleados estará simultáneamente en videollamadas HD de 3 Mbps cada una, y que los 80 usarán un ERP en la nube que consume 0.5 Mbps por usuario. La dirección pide un margen de crecimiento de 20 % sobre la demanda máxima. ¿Qué capacidad mínima debe tener el enlace?`,
+    o: [`120 Mbps: demanda máxima de 100 Mbps (60 de videollamadas y 40 del ERP) más 20 % de margen.`,
+        `100 Mbps: demanda máxima de 60 Mbps de videollamadas y 40 del ERP, sin considerar el margen solicitado.`,
+        `336 Mbps: se supone que los 80 empleados estarán en videollamada a la vez, más el ERP y el 20 % de margen.`],
+    e: `Videollamadas: 25 % × 80 = 20 usuarios × 3 Mbps = 60 Mbps. ERP: 80 × 0.5 = 40 Mbps. Demanda máxima = 100 Mbps; con 20 % de margen, 120 Mbps. La segunda opción omite el margen y la tercera ignora el 25 % de simultaneidad.` },
+  { a: 0, q: `Un servidor de base de datos transaccional realiza muchas escrituras pequeñas por segundo. Debe tolerar la falla de un disco sin degradar significativamente el rendimiento. ¿Qué configuración de discos es la más adecuada?`,
+    o: [`RAID 10: espejo con distribución; buen rendimiento de escritura y tolera la falla de un disco por cada espejo.`,
+        `RAID 5: paridad distribuida; mayor capacidad útil, pero con penalización en las escrituras pequeñas.`,
+        `RAID 0: distribución sin redundancia; máximo rendimiento, pero cualquier falla de disco pierde los datos.`],
+    e: `Muchas escrituras pequeñas penalizan a RAID 5 por el cálculo de paridad, y RAID 0 no tolera fallas. RAID 10 combina rendimiento y tolerancia a la falla de un disco.` },
+  { a: 0, q: `Una empresa ejecuta en la nube su sistema de nómina, con carga estable las 24 horas durante los próximos tres años, y además un proceso nocturno de reportes que puede interrumpirse y reiniciarse sin consecuencias. ¿Qué combinación de modelos de compra minimiza el costo?`,
+    o: [`Instancias reservadas a tres años para la nómina e instancias interrumpibles (spot) para los reportes nocturnos.`,
+        `Instancias interrumpibles (spot) para la nómina e instancias reservadas a tres años para los reportes nocturnos.`,
+        `Instancias bajo demanda con escalado automático para ambas cargas, para conservar la flexibilidad.`],
+    e: `La carga estable y continua es ideal para capacidad reservada; la tolerante a interrupciones es ideal para capacidad interrumpible (spot), mucho más barata. Invertir los modelos expone la nómina a interrupciones o paga de más por los reportes.` },
+  { a: 0, q: `Una aplicación depende en serie de un servidor de aplicaciones con disponibilidad de 99.9 % y de una base de datos con 99.5 %. Para mejorar el servicio, se duplica la base de datos en una configuración activa-activa, en la que basta con que una de las dos funcione. ¿Cuál es la disponibilidad aproximada del conjunto?`,
+    o: [`Aproximadamente 99.90 %: la base de datos duplicada alcanza 99.9975 % y se combina en serie con 99.9 % del servidor.`,
+        `Aproximadamente 99.40 %: es el producto de 99.9 % y 99.5 %, pues la duplicación no cambia la disponibilidad.`,
+        `Aproximadamente 99.998 %: la base de datos duplicada domina el resultado y la disponibilidad del servidor ya no influye.`],
+    e: `En paralelo: 1 − (0.005 × 0.005) = 0.999975. En serie con el servidor: 0.999 × 0.999975 ≈ 0.99898, es decir, cerca de 99.90 %. El servidor de aplicaciones sigue siendo un punto único de falla que limita el resultado.` },
+  { a: 0, q: `Una empresa publicará un portal web accesible desde Internet que consulta una base de datos con información de clientes. ¿Qué arquitectura de red reduce mejor el riesgo ante el compromiso del servidor web?`,
+    o: [`Servidor web en una zona desmilitarizada (DMZ) y base de datos en la red interna, con reglas que solo permiten al servidor web consultarla en el puerto requerido.`,
+        `Servidor web y base de datos juntos en la DMZ, para minimizar la latencia entre ambos y simplificar las reglas del firewall.`,
+        `Servidor web en la red interna, con el firewall perimetral redirigiendo el puerto 443 de Internet directamente hacia él.`],
+    e: `La DMZ aísla el servicio expuesto; la base de datos permanece en la red interna con acceso restringido al servidor web. Colocar ambos en la DMZ o exponer directamente la red interna aumenta el daño posible si se compromete el servidor.` },
+  { a: 0, q: `Una empresa compara dos opciones para un sistema de gestión documental durante tres años. Opción A: licencia perpetua de $90,000 más mantenimiento anual de 20 % del precio de la licencia, pagadero cada año. Opción B: suscripción de $2,800 mensuales. ¿Qué opción cuesta menos a tres años y cuál es la diferencia?`,
+    o: [`La suscripción: $100,800 frente a $144,000 de la licencia perpetua con mantenimiento; ahorra $43,200.`,
+        `La licencia perpetua: $90,000 frente a $100,800 de la suscripción; ahorra $10,800.`,
+        `La suscripción: $100,800 frente a $108,000 de la licencia con un solo año de mantenimiento; ahorra $7,200.`],
+    e: `Licencia: 90,000 + 3 × (20 % × 90,000) = 90,000 + 54,000 = 144,000. Suscripción: 36 × 2,800 = 100,800. Diferencia: 43,200. Las otras opciones omiten el mantenimiento de dos o tres años.` },
+  { a: 0, q: `Un proyecto de automatización requiere una inversión de $800,000 y generará ahorros de $350,000 por año. ¿Cuál es su periodo de recuperación y su ROI a tres años?`,
+    o: [`Periodo de recuperación de 2.3 años y ROI de 31 % a tres años.`,
+        `Periodo de recuperación de 2.3 años y ROI de 131 % a tres años.`,
+        `Periodo de recuperación de 3.0 años y ROI de 31 % a tres años.`],
+    e: `Recuperación = 800,000 ÷ 350,000 ≈ 2.29 años. Ahorros a tres años = 1,050,000. ROI = (1,050,000 − 800,000) ÷ 800,000 = 31.25 %. El 131 % resulta de dividir los ahorros totales entre la inversión sin restarla.` },
+  { a: 0, q: `Una empresa desea ejecutar docenas de instancias de un servicio ligero con arranque en segundos y alta densidad por servidor, todas sobre el mismo sistema operativo Linux, y desplegarlo de forma idéntica en desarrollo y producción. ¿Qué tecnología responde mejor a la necesidad?`,
+    o: [`Contenedores: comparten el núcleo del sistema operativo y aíslan procesos, con arranque rápido y alta densidad.`,
+        `Máquinas virtuales completas: cada una con su propio sistema operativo invitado sobre un hipervisor.`,
+        `Servidores físicos dedicados: una instancia por servidor, con aislamiento total del hardware.`],
+    e: `Arranque en segundos, alta densidad y mismo sistema operativo son ventajas de los contenedores. Las máquinas virtuales cargan un sistema operativo por instancia y los servidores dedicados desperdician capacidad.` },
+  { a: 0, q: `Un comité evalúa tres proveedores de nube con una matriz ponderada. Los pesos son: costo 50 %, soporte 20 %, escalabilidad 20 % y seguridad 10 %. Las calificaciones (de 0 a 10) son:
+<div class="tw"><table><thead><tr><th>Proveedor</th><th>Costo</th><th>Soporte</th><th>Escalabilidad</th><th>Seguridad</th></tr></thead><tbody><tr><td>X</td><td>9</td><td>6</td><td>6</td><td>6</td></tr><tr><td>Y</td><td>8</td><td>8</td><td>7</td><td>7</td></tr><tr><td>Z</td><td>6</td><td>10</td><td>9</td><td>8</td></tr></tbody></table></div>
+¿Qué proveedor obtiene la mayor calificación ponderada?`,
+    o: [`Proveedor Y, con 7.70 puntos ponderados.`,
+        `Proveedor Z, con 8.25 puntos, que es su promedio simple sin ponderar.`,
+        `Proveedor X, con 9 puntos, por su calificación en el criterio de mayor peso.`],
+    e: `Y = 8(0.5) + 8(0.2) + 7(0.2) + 7(0.1) = 7.70; Z = 6(0.5) + 10(0.2) + 9(0.2) + 8(0.1) = 7.60; X = 9(0.5) + 6(0.2) + 6(0.2) + 6(0.1) = 7.50. Z gana solo si se ignoran los pesos y X solo si se mira únicamente el costo.` },
+ 
+  { a: 1, c: 'D', q: `¿Cuál es la interpretación correcta de la variación del costo (CV) y la variación del cronograma (SV) del proyecto?`,
+    o: [`CV = −$60,000 y SV = −$80,000: gasta más de lo que ha ganado y avanza más lento de lo planeado.`,
+        `CV = −$80,000 y SV = −$60,000: gasta más de lo que ha ganado y avanza más lento de lo planeado.`,
+        `CV = +$60,000 y SV = +$80,000: gasta menos de lo que ha ganado y avanza más rápido de lo planeado.`],
+    e: `CV = EV − AC = 420,000 − 480,000 = −60,000. SV = EV − PV = 420,000 − 500,000 = −80,000. Ambos negativos indican sobrecosto y retraso. La segunda opción invierte las fórmulas.` },
+  { a: 1, c: 'D', q: `Para terminar el proyecto dentro del presupuesto original (BAC), ¿cuál es el índice de desempeño del trabajo por completar (TCPI) y qué significa?`,
+    o: [`TCPI = 1.08: el trabajo restante debe ejecutarse con una eficiencia de costo mayor que la lograda hasta ahora (CPI de 0.88).`,
+        `TCPI = 0.92: el trabajo restante puede ejecutarse con menor eficiencia de costo que la lograda hasta ahora.`,
+        `TCPI = 0.88: basta con mantener el CPI actual para cerrar dentro del presupuesto original.`],
+    e: `TCPI = (BAC − EV) ÷ (BAC − AC) = 780,000 ÷ 720,000 ≈ 1.08. Como es mayor que el CPI actual (420 ÷ 480 = 0.875), se necesita más eficiencia que la observada. 0.92 es el inverso, y mantener 0.88 produciría un sobrecosto.` },
+  { a: 1, c: 'D', q: `De acuerdo con el análisis cuantitativo de riesgos, ¿qué riesgo tiene el mayor valor monetario esperado (VME) y a cuánto asciende la reserva para contingencias si se cubre el VME de los tres riesgos?`,
+    o: [`R2, con VME de $80,000; reserva para contingencias de $175,000.`,
+        `R1, con VME de $35,000, por tener la mayor probabilidad; reserva para contingencias de $175,000.`,
+        `R2, con VME de $80,000; reserva para contingencias de $570,000, que es la suma de los impactos.`],
+    e: `VME = probabilidad × impacto: R1 = 35,000; R2 = 80,000; R3 = 60,000. La suma es 175,000. Sumar los impactos (570,000) ignora la probabilidad, y la probabilidad por sí sola no determina la prioridad.` },
+  { a: 1, c: 'D', q: `Para atender la migración, el equipo del proyecto crece de 12 a 16 personas, incluido el gerente. Con la fórmula de canales de comunicación n(n − 1) ÷ 2, ¿cuántos canales habrá y cuántos más que antes?`,
+    o: [`120 canales en total, 54 más que con 12 personas.`,
+        `240 canales en total, 174 más que con 12 personas.`,
+        `136 canales en total, 58 más que con 12 personas.`],
+    e: `Con 12 personas: 12 × 11 ÷ 2 = 66. Con 16: 16 × 15 ÷ 2 = 120. Diferencia: 54. Olvidar dividir entre 2 da 240 y usar n(n + 1) ÷ 2 da 136.` },
+  { a: 1, q: `En el control de calidad de un proceso de carga de datos, el diagrama de control muestra siete puntos consecutivos por encima de la línea central, aunque todos quedan dentro de los límites superior e inferior de control. ¿Cómo debe interpretarse?`,
+    o: [`Hay una tendencia no aleatoria (regla de los siete puntos) que sugiere una causa asignable, aunque ningún punto salió de los límites; debe investigarse.`,
+        `El proceso está bajo control, porque ningún punto excede los límites superior o inferior de control.`,
+        `El proceso incumple las especificaciones del cliente, porque siete puntos consecutivos superan el valor promedio.`],
+    e: `Siete puntos consecutivos del mismo lado de la línea central indican un patrón no aleatorio y una posible causa asignable. Además, los límites de control no son los límites de especificación del cliente.` },
+  { a: 1, q: `Una matriz RACI del proyecto contiene estas filas (R = ejecuta, A = responsable último, C = consultado, I = informado):
+<div class="tw"><table><thead><tr><th>Actividad</th><th>Gerente</th><th>Analista</th><th>DBA</th><th>QA</th></tr></thead><tbody><tr><td>Modelo de datos</td><td>A</td><td>C</td><td>R</td><td>I</td></tr><tr><td>Plan de pruebas</td><td>A</td><td>I</td><td>I</td><td>A</td></tr></tbody></table></div>
+¿Qué defecto presenta la fila «Plan de pruebas»?`,
+    o: [`Tiene dos responsables últimos (A) y ningún ejecutor (R); debe haber un solo A y al menos un R.`,
+        `Tiene dos ejecutores (R) y ningún responsable último (A); debe haber un solo R y al menos un A.`,
+        `Tiene un consultado (C) y un informado (I) de más; la matriz debe asignar solo A y R por actividad.`],
+    e: `En una RACI cada actividad debe tener exactamente un A y al menos un R. La fila marca dos A (Gerente y QA) y ningún R. Los consultados e informados son válidos.` },
+  { a: 1, q: `Un proyecto tiene las siguientes actividades:
+<div class="tw"><table><thead><tr><th>Actividad</th><th>Duración (días)</th><th>Predecesora</th><th>Costo por día de compresión</th><th>Compresión máxima</th></tr></thead><tbody><tr><td>A</td><td>4</td><td>—</td><td>$300</td><td>1 día</td></tr><tr><td>B</td><td>6</td><td>A</td><td>$100</td><td>2 días</td></tr><tr><td>C</td><td>8</td><td>A</td><td>$500</td><td>2 días</td></tr><tr><td>D</td><td>5</td><td>B y C</td><td>$200</td><td>2 días</td></tr><tr><td>E</td><td>3</td><td>D</td><td>$400</td><td>1 día</td></tr></tbody></table></div>
+El proyecto debe acortarse 2 días con el menor costo adicional. ¿Qué decisión es la correcta?`,
+    o: [`Comprimir D dos días: costo adicional de $400 y duración final de 18 días.`,
+        `Comprimir B dos días: costo adicional de $200 y duración final de 18 días.`,
+        `Comprimir A un día y C un día: costo adicional de $800 y duración final de 18 días.`],
+    e: `La ruta crítica es A-C-D-E = 4 + 8 + 5 + 3 = 20 días (A-B-D-E dura 18). Comprimir B no acorta el proyecto porque no es crítica. Comprimir D dos días cuesta 400 y lo lleva a 18 días; la tercera opción también cumple pero cuesta 800.` },
+  { a: 1, q: `El alcance de un proyecto incluye análisis, diseño, construcción, pruebas, capacitación y gestión del proyecto. El soporte posterior a la entrega por 12 meses se contratará aparte y no forma parte del proyecto. ¿Qué primer nivel de la EDT cumple con la regla del 100 %?`,
+    o: [`Análisis, diseño, construcción, pruebas, capacitación y gestión del proyecto.`,
+        `Análisis, diseño, construcción, capacitación y gestión del proyecto.`,
+        `Análisis, diseño, construcción, pruebas, capacitación, gestión del proyecto y soporte posterior por 12 meses.`],
+    e: `La regla del 100 % exige que la EDT incluya todo el trabajo del alcance y nada más. La segunda opción omite las pruebas y la tercera incluye trabajo fuera del alcance.` },
+ 
+  { a: 2, c: 'A', q: `La dirección quiere conocer a los clientes que nunca han realizado un pedido. ¿Qué consulta lo obtiene?`,
+    o: [`<code>SELECT c.nombre FROM cliente c LEFT JOIN pedido p ON p.id_cliente = c.id_cliente WHERE p.id_pedido IS NULL;</code>`,
+        `<code>SELECT c.nombre FROM cliente c LEFT JOIN pedido p ON p.id_cliente = c.id_cliente WHERE p.id_cliente = NULL;</code>`,
+        `<code>SELECT c.nombre FROM cliente c INNER JOIN pedido p ON p.id_cliente = c.id_cliente WHERE p.id_pedido IS NULL;</code>`],
+    e: `El LEFT JOIN conserva a todos los clientes y deja nulos los campos de pedido cuando no hay coincidencia; se detectan con IS NULL. Comparar con «= NULL» nunca es verdadero, y un INNER JOIN no conserva a los clientes sin pedidos.` },
+  { a: 2, c: 'A', q: `¿Qué consulta calcula las ventas totales por ciudad, solo de pedidos entregados en 2026, y muestra únicamente las ciudades con más de $500,000?`,
+    o: [`<code>SELECT c.ciudad, SUM(d.cantidad * d.precio_unitario) FROM cliente c JOIN pedido p ON p.id_cliente = c.id_cliente JOIN detalle_pedido d ON d.id_pedido = p.id_pedido WHERE p.estatus = 'Entregado' AND p.fecha &gt;= '2026-01-01' AND p.fecha &lt; '2027-01-01' GROUP BY c.ciudad HAVING SUM(d.cantidad * d.precio_unitario) &gt; 500000;</code>`,
+        `<code>SELECT c.ciudad, SUM(d.cantidad * d.precio_unitario) FROM cliente c JOIN pedido p ON p.id_cliente = c.id_cliente JOIN detalle_pedido d ON d.id_pedido = p.id_pedido WHERE p.estatus = 'Entregado' AND p.fecha &gt;= '2026-01-01' AND p.fecha &lt; '2027-01-01' GROUP BY c.ciudad, c.nombre HAVING SUM(d.cantidad * d.precio_unitario) &gt; 500000;</code>`,
+        `<code>SELECT c.ciudad, SUM(d.precio_unitario) FROM cliente c JOIN pedido p ON p.id_cliente = c.id_cliente JOIN detalle_pedido d ON d.id_pedido = p.id_pedido WHERE p.estatus = 'Entregado' AND p.fecha &gt;= '2026-01-01' AND p.fecha &lt; '2027-01-01' GROUP BY c.ciudad HAVING SUM(d.precio_unitario) &gt; 500000;</code>`],
+    e: `El importe de cada renglón es cantidad × precio_unitario, y para totalizar por ciudad se agrupa solo por ciudad. Agrupar además por nombre da totales por cliente, y sumar solo el precio ignora las cantidades.` },
+  { a: 2, c: 'A', q: `Una consulta del reporte diario tarda más de tres minutos: <code>SELECT * FROM pedido WHERE YEAR(fecha) = 2026 AND estatus = 'Entregado';</code> Existe un índice sobre la columna fecha y el plan de ejecución muestra un recorrido completo de la tabla. ¿Qué acción corrige la causa?`,
+    o: [`Reescribir el filtro como un rango (<code>fecha &gt;= '2026-01-01' AND fecha &lt; '2027-01-01'</code>) para que el optimizador pueda usar el índice, de preferencia con un índice compuesto (estatus, fecha).`,
+        `Crear un segundo índice idéntico sobre la columna fecha para que el optimizador cuente con dos alternativas de acceso.`,
+        `Particionar la tabla por estatus y conservar el filtro con YEAR(fecha), porque la función se evalúa una sola vez por partición.`],
+    e: `Aplicar una función a la columna (YEAR(fecha)) impide usar el índice sobre esa columna. Reescribir el predicado como rango lo hace utilizable. Duplicar índices no cambia el predicado, y el particionamiento por estatus no elimina la función.` },
+  { a: 2, c: 'A', q: `Cancelar un pedido requiere dos operaciones: cambiar su estatus a «Cancelado» y devolver a <code>producto.existencia</code> las cantidades del pedido. Si el servidor falla entre ambas operaciones, el estatus y las existencias quedarían inconsistentes. ¿Cómo debe implementarse?`,
+    o: [`Ejecutar ambas actualizaciones dentro de una transacción (BEGIN ... COMMIT) y revertirla (ROLLBACK) si ocurre un error, para garantizar la atomicidad.`,
+        `Ejecutar ambas actualizaciones con confirmación automática y registrar los errores en una bitácora para corregirlos manualmente.`,
+        `Ejecutar cada actualización en una sesión distinta para reducir el tiempo de bloqueo de cada tabla.`],
+    e: `La atomicidad (la A de ACID) garantiza que ambas operaciones se confirmen juntas o ninguna. La confirmación automática y las sesiones separadas permiten estados intermedios inconsistentes.` },
+  { a: 2, c: 'B', q: `¿Qué asignación VLSM del bloque 10.20.0.0/22 es válida, sin traslapes y con capacidad suficiente?`,
+    o: [`Administrativos 10.20.0.0/24; Docentes 10.20.1.0/25; Laboratorios 10.20.1.128/26; Enlace 10.20.1.192/30.`,
+        `Administrativos 10.20.0.0/24; Docentes 10.20.1.0/25; Laboratorios 10.20.1.64/26; Enlace 10.20.1.192/30.`,
+        `Administrativos 10.20.0.0/25; Docentes 10.20.0.128/25; Laboratorios 10.20.1.0/26; Enlace 10.20.1.64/30.`],
+    e: `Un /24 ofrece 254 equipos (≥ 200), un /25 ofrece 126 (≥ 100), un /26 ofrece 62 (≥ 50) y un /30 ofrece 2. En la segunda opción 10.20.1.64/26 cae dentro de 10.20.1.0/25 (traslape). En la tercera, el /25 de Administrativos solo da 126 equipos, insuficiente para 200.` },
+  { a: 2, c: 'B', q: `Un equipo de Docentes no logra comunicarse con el servidor 10.20.0.50. Su configuración es: dirección 10.20.1.140, máscara 255.255.255.128 y puerta de enlace 10.20.1.1. ¿Cuál es la causa más probable?`,
+    o: [`La dirección 10.20.1.140 queda fuera de la subred 10.20.1.0/25 (10.20.1.0 a 10.20.1.127), a la que pertenece la puerta de enlace 10.20.1.1; el equipo no puede alcanzarla.`,
+        `La dirección 10.20.1.140 coincide con la dirección de difusión de la subred de Docentes, por lo que el router descarta el tráfico.`,
+        `El servidor 10.20.0.50 está en una subred /24 y el router solo puede enrutar entre subredes que tengan la misma longitud de máscara.`],
+    e: `Con máscara /25, el equipo pertenece a 10.20.1.128/25, mientras que la puerta de enlace 10.20.1.1 está en 10.20.1.0/25: no están en la misma red, así que no puede enviarle tráfico. La difusión de 10.20.1.0/25 es .127, y los routers sí enrutan subredes de distinta longitud (VLSM).` },
+  { a: 2, c: 'B', q: `Los equipos de la VLAN 10 se comunican entre los dos switches, pero los de la VLAN 20 de SW1 no alcanzan a los de la VLAN 20 de SW2. La salida de los comandos de verificación es:
+<pre>SW1# show interfaces trunk
+Port    Mode  Native vlan  Vlans allowed on trunk
+Gi0/24  on    1            10
 
-const Q = [
-  /* ===== ÁREA 1: Necesidades informáticas (12) ===== */
-  { a: 0, c: 'A', q: `De acuerdo con el caso, ¿cuál es la necesidad informática prioritaria de la clínica?`,
-    o: [`Un expediente clínico electrónico centralizado, consultable desde las tres sedes, con respaldo y registro de accesos y modificaciones.`,
-        `Un sistema de facturación centralizado, consultable desde las tres sedes, con respaldo y registro de accesos y modificaciones.`,
-        `Un expediente clínico electrónico independiente en cada sede, con respaldo diario y registro de accesos y modificaciones.`],
-    e: `La queja de los médicos y la exigencia de la autoridad se refieren al expediente clínico consultable entre sedes. La facturación con respaldo es una necesidad real pero secundaria, y un expediente por sede no resuelve la consulta cruzada.` },
-  { a: 0, c: 'A', q: `Considerando las restricciones de presupuesto y de personal descritas, ¿qué modelo de adquisición es el más adecuado?`,
-    o: [`Software como servicio (SaaS) con cuota mensual, donde el proveedor administra la infraestructura, el almacenamiento y los respaldos.`,
-        `Infraestructura como servicio (IaaS) con cuota mensual, donde la clínica instala y administra el sistema operativo, la aplicación y los respaldos.`,
-        `Servidores propios en una de las sedes con licencias de pago único, donde un proveedor externo da mantenimiento correctivo cuando se le solicita.`],
-    e: `Poco capital inicial, cuota mensual aceptable y ausencia de personal técnico apuntan a SaaS. En IaaS la clínica seguiría administrando sistema operativo y aplicación, y los servidores propios exigen inversión inicial y administración.` },
-  { a: 0, c: 'A', q: `¿Qué requerimiento de seguridad responde directamente a la exigencia de la autoridad sanitaria?`,
-    o: [`Auditoría: bitácoras de acceso y modificación que registren usuario, fecha, hora y acción realizada sobre cada expediente.`,
-        `Autenticación: verificación de la identidad de cada usuario mediante contraseña y segundo factor antes de ingresar al sistema.`,
-        `Confidencialidad: cifrado de los expedientes almacenados y de las comunicaciones entre las sedes y el sistema.`],
-    e: `La autoridad pide un registro de quién consultó o modificó cada expediente y cuándo: eso es auditoría (bitácoras). Autenticación y cifrado protegen el acceso y los datos, pero no generan ese rastro.` },
-  { a: 0, c: 'B', q: `¿Cuál es la causa raíz que explica las tres quejas de los gerentes?`,
-    o: [`El punto de venta y el control de inventarios no están integrados, lo que produce doble captura y existencias desactualizadas.`,
-        `El área de compras carece de un módulo que sugiera pedidos automáticamente, lo que produce faltantes y existencias desactualizadas.`,
-        `Los cajeros no están capacitados para registrar las ventas en el punto de venta, lo que produce doble captura y existencias desactualizadas.`],
-    e: `La observación muestra que la venta se captura dos veces y que el inventario se actualiza hasta el cierre: el problema es la falta de integración. La sugerencia de pedidos es un síntoma y el texto no indica falta de capacitación.` },
-  { a: 0, c: 'B', q: `Para la primera fase de tres meses, ¿qué requerimiento debe clasificarse como «indispensable» (Must have) en una priorización MoSCoW?`,
-    o: [`Actualizar el inventario en línea a partir de cada venta registrada en el punto de venta.`,
-        `Sugerir pedidos a proveedores a partir de los niveles mínimos de existencia por sucursal.`,
-        `Mostrar a la gerencia un tablero de ventas por sucursal con comparativos mensuales.`],
-    e: `Resolver la integración elimina la doble captura y da un inventario confiable. La sugerencia automática de pedidos depende de ese inventario y el tablero es deseable, no indispensable para resolver el problema.` },
-  { a: 0, c: 'B', q: `¿Qué técnica de levantamiento de requerimientos permitió descubrir la doble captura, que ningún gerente mencionó?`,
-    o: [`Observación directa del proceso en el lugar de trabajo, que revela prácticas que los usuarios no verbalizan.`,
-        `Entrevista estructurada con los gerentes, que permite profundizar en las necesidades que cada uno expresa.`,
-        `Análisis de documentos, como manuales y formatos, que muestra cómo debería ejecutarse el proceso.`],
-    e: `El hallazgo surgió al observar al cajero en su puesto. Las entrevistas recogen lo que las personas dicen y los documentos, lo que debería hacerse, no lo que realmente se hace.` },
-  { a: 0, q: `Un hotel con 300 habitaciones desea ofrecer Wi-Fi a sus huéspedes sin que estos puedan alcanzar los equipos del sistema de reservaciones ni las cámaras de seguridad, que operan sobre la misma infraestructura física de red. El personal administrativo debe conservar su acceso a esos sistemas. ¿Qué solución de red satisface la necesidad?`,
-    o: [`Segmentar la red con una VLAN y un SSID exclusivos para huéspedes, y reglas de firewall que impidan su acceso a la red administrativa.`,
-        `Mantener una sola red y un único SSID, y filtrar por dirección MAC los dispositivos de los huéspedes registrados en recepción.`,
-        `Cifrar la red inalámbrica con WPA3 y una contraseña única por habitación, dentro de la misma red lógica que los sistemas del hotel.`],
-    e: `El requisito es aislar el tráfico de huéspedes de los sistemas internos: se logra con segmentación (VLAN/SSID) y reglas de firewall. El filtrado por MAC y el cifrado de la red inalámbrica no separan las redes lógicas.` },
-  { a: 0, q: `Una aseguradora determinó que sus servicios de cotización no pueden estar fuera de operación más de una hora tras un desastre en su centro de datos principal y que la pérdida de datos debe ser de apenas unos segundos. ¿Qué tipo de sitio alterno cumple con estos requisitos?`,
-    o: [`Sitio activo (hot site): instalaciones y equipos operando en paralelo, con réplica continua de los datos.`,
-        `Sitio tibio (warm site): instalaciones con equipo parcial, donde los datos se restauran desde respaldos periódicos.`,
-        `Sitio frío (cold site): instalaciones con energía y conectividad, donde el equipo se adquiere e instala después del desastre.`],
-    e: `Una recuperación en menos de una hora con pérdida de segundos exige equipo en operación y réplica continua: sitio activo. El tibio tarda horas y el frío, días.` },
-  { a: 0, q: `Una empresa manufacturera mediana tiene procesos estándar de contabilidad, compras, inventarios y producción. Quiere operar en menos de seis meses, evitar el mantenimiento de código propio y adaptar el sistema mediante parametrización. ¿Qué opción de adquisición de software es la más adecuada?`,
-    o: [`Un paquete ERP comercial, configurado mediante la parametrización de sus módulos estándar.`,
-        `Un desarrollo a la medida con un proveedor externo, con entrega del código fuente para que la empresa lo mantenga.`,
-        `Un conjunto de sistemas independientes por área, integrados mediante archivos de intercambio.`],
-    e: `Procesos estándar, plazo corto, parametrización y ausencia de código propio son las condiciones de un ERP comercial. El desarrollo a la medida implica mantener código y los sistemas aislados no integran los procesos.` },
-  { a: 0, q: `El área de recursos humanos de un corporativo solicita un portal de nómina. ¿Cuál de los siguientes enunciados es un requerimiento no funcional?`,
-    o: [`El portal debe estar disponible al menos el 99.9 % del tiempo durante el horario laboral.`,
-        `El portal debe permitir al empleado descargar su recibo de nómina en formato PDF.`,
-        `El portal debe calcular las deducciones de impuestos con base en la tabla vigente.`],
-    e: `La disponibilidad describe una cualidad con la que opera el sistema (no funcional). Descargar el recibo y calcular deducciones son funciones que el sistema realiza (funcionales).` },
-  { a: 0, q: `Una productora de video necesita que varios editores trabajen simultáneamente sobre los mismos archivos de gran tamaño, accediendo a carpetas compartidas por la red local mediante los protocolos SMB o NFS. ¿Qué tipo de almacenamiento corresponde?`,
-    o: [`NAS: almacenamiento conectado en red que entrega archivos y carpetas compartidas.`,
-        `SAN: red de almacenamiento que entrega bloques a los servidores mediante una red dedicada.`,
-        `DAS: almacenamiento conectado directamente a un único servidor o equipo.`],
-    e: `El acceso a archivos compartidos por SMB o NFS en la red local es característico del NAS. La SAN entrega bloques a servidores y el DAS no se comparte en red.` },
-  { a: 0, q: `Un centro de atención telefónica con 120 posiciones requiere administrar de forma centralizada el software de atención, reducir el mantenimiento de equipos y evitar que la información de los clientes quede almacenada en el equipo del agente. ¿Qué solución cubre estas necesidades?`,
-    o: [`Clientes ligeros que acceden a escritorios virtuales (VDI) alojados en el centro de datos.`,
-        `Computadoras de escritorio con una imagen estándar y software de administración remota de configuraciones.`,
-        `Laptops con cifrado de disco completo y conexión a una red privada virtual (VPN).`],
-    e: `Con VDI la información y el software residen en el centro de datos, el equipo del agente casi no requiere mantenimiento y no almacena datos. Las otras opciones dejan los datos en el equipo local.` },
+SW2# show interfaces trunk
+Port    Mode  Native vlan  Vlans allowed on trunk
+Gi0/24  on    1            10,20</pre>
+¿Qué corrección procede?`,
+    o: [`Permitir la VLAN 20 en el enlace troncal Gi0/24 de SW1, para que coincida con SW2.`,
+        `Cambiar el puerto Gi0/24 de SW2 a modo de acceso en la VLAN 20.`,
+        `Crear una interfaz virtual (SVI) para la VLAN 20 en SW2, para enrutar el tráfico hacia SW1.`],
+    e: `SW1 solo permite la VLAN 10 en el troncal, por lo que las tramas de la VLAN 20 no cruzan el enlace. Convertir el puerto en acceso rompería la VLAN 10, y una SVI enruta entre VLAN pero no extiende una VLAN entre switches.` },
+  { a: 2, c: 'B', q: `En el firewall debe permitirse que únicamente los docentes (10.20.1.0/25) consulten el servidor de expedientes 10.20.0.50 por HTTPS (TCP 443), y bloquearse cualquier otro tráfico hacia ese servidor. El firewall evalúa las reglas en orden y aplica la primera que coincida. ¿Qué conjunto de reglas cumple lo requerido?`,
+    o: [`Regla 1: permitir TCP 443 desde 10.20.1.0/25 hacia 10.20.0.50. Regla 2: denegar cualquier otro tráfico hacia 10.20.0.50.`,
+        `Regla 1: denegar cualquier tráfico hacia 10.20.0.50. Regla 2: permitir TCP 443 desde 10.20.1.0/25 hacia 10.20.0.50.`,
+        `Regla 1: permitir TCP 443 desde 10.20.1.0/25 hacia 10.20.0.0/24. Regla 2: denegar cualquier otro tráfico hacia 10.20.0.50.`],
+    e: `Como se aplica la primera coincidencia, la regla específica de permiso debe ir antes que la denegación general. En la segunda opción la denegación bloquea todo, incluido el tráfico permitido, y la tercera permite acceso a toda la subred 10.20.0.0/24, más de lo requerido.` },
+  { a: 2, c: 'C', q: `¿Qué estrategia es la más adecuada para resolver los problemas de despliegue y de saturación sin detener la operación?`,
+    o: [`Extraer gradualmente el módulo de rastreo como un servicio independiente, mientras el monolito sigue operando con el resto de los módulos.`,
+        `Reescribir toda la plataforma como microservicios y cambiar de sistema en una sola fecha de corte.`,
+        `Aumentar la capacidad del servidor del monolito (escalamiento vertical) para absorber los picos del módulo de rastreo.`],
+    e: `La migración incremental (patrón estrangulador) aísla primero el módulo problemático, permite desplegarlo y escalarlo por separado y no detiene la operación. La reescritura total con corte único es de alto riesgo y el escalamiento vertical no resuelve el acoplamiento ni los despliegues completos.` },
+  { a: 2, c: 'C', q: `El módulo de pagos debe integrar varios proveedores, y se agregarán nuevos con frecuencia. ¿Qué diseño permite hacerlo sin modificar el código ya probado?`,
+    o: [`Definir una interfaz común de proveedor de pago e implementar una clase por proveedor (patrón Strategy), de modo que los nuevos se agreguen sin modificar el código existente.`,
+        `Mantener una sola clase de pagos con una estructura condicional (if/else) por proveedor, agregando una rama por cada nuevo proveedor.`,
+        `Copiar el módulo de pagos para cada proveedor y mantener versiones independientes del código duplicado.`],
+    e: `Una interfaz con una implementación por proveedor cumple el principio abierto/cerrado: se extiende sin modificar lo existente. Las ramas condicionales obligan a modificar código probado y la duplicación multiplica el mantenimiento.` },
+  { a: 2, c: 'C', q: `Cuando se confirma un pedido, el servicio de pedidos debe avisar a facturación. Si facturación está caída unos minutos, no debe perderse ningún aviso ni detenerse la confirmación de pedidos. ¿Qué mecanismo de integración conviene?`,
+    o: [`Publicar un evento en una cola de mensajes persistente, que facturación consuma cuando esté disponible.`,
+        `Invocar el servicio de facturación mediante una llamada síncrona (REST) con un tiempo de espera largo.`,
+        `Compartir la base de datos de pedidos para que facturación lea los pedidos nuevos cuando le convenga.`],
+    e: `La mensajería asíncrona con persistencia desacopla ambos servicios y evita pérdidas mientras el consumidor no está disponible. La llamada síncrona bloquea la confirmación y la base compartida acopla los servicios.` },
+  { a: 2, q: `¿Qué imprime el siguiente programa?
+<pre>def f(n):
+    total = 0
+    for i in range(1, n + 1):
+        if i % 3 == 0 or i % 5 == 0:
+            total += i
+    return total
 
-  /* ===== ÁREA 2: Gestión de proyectos (9) ===== */
-  { a: 1, c: 'C', q: `¿Qué deficiencia de planeación evidencia el caso?`,
-    o: [`La identificación incompleta de interesados y de requisitos al planificar el alcance del proyecto.`,
-        `La estimación deficiente de la duración de las actividades al elaborar el cronograma del proyecto.`,
-        `La definición incompleta de los criterios de aceptación al planificar la gestión de la calidad del proyecto.`],
-    e: `Un requisito legal omitido y un interesado con poder de veto que nadie identificó son fallas de la identificación de requisitos e interesados. El caso no habla de estimaciones de duración ni de criterios de aceptación.` },
-  { a: 1, c: 'C', q: `¿Qué debe hacer el gerente del proyecto respecto de la firma electrónica?`,
-    o: [`Documentar una solicitud de cambio, analizar su impacto en alcance, cronograma y costo, y someterla al control integrado de cambios, incluido el comité de finanzas.`,
-        `Absorber el costo con la reserva para contingencias, sin solicitud formal, porque la firma electrónica es un requisito legal.`,
-        `Reducir el alcance de otros entregables por un valor equivalente para integrar la firma electrónica sin modificar la línea base.`],
-    e: `Todo cambio a las líneas base pasa por el control integrado de cambios. Aunque sea obligatorio, requiere análisis de impacto y aprobación. Las otras opciones evitan el proceso formal.` },
-  { a: 1, c: 'C', q: `Con base en el modelo de poder e interés, ¿cómo debe gestionarse al director de comunicación social?`,
-    o: [`Gestionarlo de cerca: involucrarlo y consultarlo en las decisiones, porque tiene alto poder y alto interés.`,
-        `Mantenerlo satisfecho: darle información de alto nivel, porque tiene alto poder pero bajo interés.`,
-        `Mantenerlo informado: enviarle reportes periódicos, porque tiene bajo poder pero alto interés.`],
-    e: `Puede bloquear la publicación (alto poder) y exige participar con una campaña (alto interés). Los interesados con ambas características se gestionan de cerca.` },
-  { a: 1, c: 'D', q: `Si la velocidad promedio del equipo se mantiene, ¿es posible cumplir la fecha deseada?`,
-    o: [`No: se requieren 6 sprints (180 ÷ 30), uno más de lo deseado, por lo que habría que negociar el alcance o la fecha.`,
-        `Sí: se requieren 5 sprints, porque la velocidad del equipo aumenta en cada iteración.`,
-        `No: se requieren 7 sprints, porque debe reservarse un sprint final para las pruebas de aceptación.`],
-    e: `180 puntos ÷ 30 puntos por sprint = 6 sprints. Para terminar en 5 se necesitarían 36 puntos por sprint; el texto no sustenta que la velocidad aumente ni que se requiera un sprint adicional.` },
-  { a: 1, c: 'D', q: `¿Cómo debe tratarse el cambio de prioridades que solicita el Product Owner con el sprint en curso?`,
-    o: [`Incorporarlo al backlog del producto y priorizarlo para el siguiente sprint, protegiendo el objetivo del sprint en curso.`,
-        `Incorporarlo al sprint en curso y ampliar su duración hasta terminar las historias comprometidas y las nuevas.`,
-        `Aceptarlo solo si el Scrum Master lo aprueba, ajustando el backlog del sprint sin consultar al equipo de desarrollo.`],
-    e: `El sprint tiene duración fija y un objetivo que debe protegerse. Los cambios se ordenan en el backlog del producto para el siguiente sprint. No se alarga el sprint ni se decide sin el equipo.` },
-  { a: 1, c: 'D', q: `¿Qué acción corrige que los desarrolladores acepten historias sin criterios de aceptación?`,
-    o: [`Refinar el backlog con el Product Owner para que cada historia tenga criterios de aceptación antes de la planeación del sprint.`,
-        `Definir los criterios de aceptación durante el sprint, conforme el desarrollador los necesite para construir la historia.`,
-        `Encargar los criterios de aceptación al área de pruebas, al final del sprint, para validar lo ya construido.`],
-    e: `Las historias deben estar claras y con criterios de aceptación antes de entrar al sprint; se logra con el refinamiento del backlog. Definirlos durante o después del sprint genera retrabajo e incertidumbre.` },
-  { a: 1, q: `Un proyecto de implantación de una red tiene las siguientes actividades, con su duración en días y sus predecesoras: A (3 días, sin predecesora); B (4 días, después de A); C (2 días, después de A); D (5 días, después de B y de C); E (2 días, después de D). ¿Cuál es la ruta crítica, la duración del proyecto y la holgura de la actividad C?`,
-    o: [`Ruta A-B-D-E; duración de 14 días; holgura de C de 2 días.`,
-        `Ruta A-C-D-E; duración de 12 días; holgura de B de 2 días.`,
-        `Ruta A-B-D-E; duración de 14 días; holgura de C de 4 días.`],
-    e: `A-B-D-E = 3 + 4 + 5 + 2 = 14 días (la más larga); A-C-D-E = 3 + 2 + 5 + 2 = 12 días. C puede retrasarse 14 − 12 = 2 días sin afectar el proyecto (4 − 2 = 2 de holgura frente a B).` },
-  { a: 1, q: `En un proyecto, el presupuesto total (BAC) es de $500,000. A la fecha, el trabajo realizado equivale al 40 % del alcance y se han gastado $260,000. Si el gerente supone que el desempeño de costos observado se mantendrá hasta el final, ¿cuál es la estimación a la conclusión (EAC)?`,
-    o: [`$650,000, calculado como BAC ÷ CPI.`,
-        `$560,000, calculado como AC + (BAC − EV), que supone que el trabajo restante se hará al costo presupuestado.`,
-        `$500,000, calculado como BAC, que supone que el proyecto terminará dentro del presupuesto original.`],
-    e: `EV = 40 % × 500,000 = 200,000. CPI = EV ÷ AC = 200,000 ÷ 260,000 ≈ 0.77. Si el desempeño actual continúa, EAC = BAC ÷ CPI = 650,000. La fórmula AC + (BAC − EV) aplica cuando la variación es atípica.` },
-  { a: 1, q: `La dirección de TI contratará con un proveedor externo la migración de 40 servidores. El alcance, los entregables y los criterios de aceptación están completamente definidos, el presupuesto está aprobado y la organización no desea asumir el riesgo de sobrecostos. ¿Qué tipo de contrato conviene?`,
-    o: [`Contrato de precio fijo cerrado, porque el alcance está bien definido y el riesgo de sobrecosto recae en el proveedor.`,
-        `Contrato de costos reembolsables más honorarios, porque el comprador paga los costos reales y asume el riesgo de sobrecosto.`,
-        `Contrato por tiempo y materiales, porque se paga por hora de trabajo con una tarifa pactada y el alcance puede ajustarse.`],
-    e: `Alcance definido y deseo de no asumir el sobrecosto indican un contrato de precio fijo. Los otros dos trasladan al comprador total o parcialmente el riesgo de costo.` },
-
-  /* ===== ÁREA 3: Implementación de sistemas (11) ===== */
-  { a: 2, c: 'E', q: `¿Cómo debe modelarse la relación entre socios y clases?`,
-    o: [`Como una relación de muchos a muchos, resuelta con la tabla intermedia reserva, que contiene las llaves foráneas de socio y de clase.`,
-        `Como una relación de uno a muchos, resuelta con la llave foránea id_clase dentro de la tabla socio.`,
-        `Como una relación de muchos a muchos, resuelta con una columna en la tabla clase que almacene la lista de id de sus socios.`],
-    e: `Un socio reserva muchas clases y una clase recibe muchos socios: relación muchos a muchos, que se resuelve con una tabla intermedia. Guardar una lista en una columna viola la primera forma normal.` },
-  { a: 2, c: 'E', q: `¿Cómo debe modelarse la relación entre socios y membresías, de acuerdo con las reglas del negocio?`,
-    o: [`Uno a muchos, con id_socio como llave foránea en membresía y una restricción que permita solo una membresía vigente por socio.`,
-        `Uno a uno, con id_membresía como llave foránea en socio, para apuntar siempre a la única membresía vigente.`,
-        `Uno a muchos, con id_socio como llave foránea en membresía, eliminando la membresía anterior al contratar una nueva.`],
-    e: `Un socio tiene varias membresías en el tiempo (uno a muchos) y se conserva el historial. La restricción de «una vigente» se impone con una regla, no borrando datos ni limitando la relación a uno a uno.` },
-  { a: 2, c: 'E', q: `¿Qué consulta obtiene el nombre de cada instructor de la sucursal «Centro» que tenga más de 20 reservas, junto con su número de reservas?`,
-    o: [`<code>SELECT i.nombre, COUNT(r.id) FROM instructor i JOIN clase c ON c.id_instructor = i.id JOIN reserva r ON r.id_clase = c.id JOIN sucursal s ON s.id = c.id_sucursal WHERE s.nombre = 'Centro' GROUP BY i.nombre HAVING COUNT(r.id) &gt; 20;</code>`,
-        `<code>SELECT i.nombre, COUNT(r.id) FROM instructor i JOIN clase c ON c.id_instructor = i.id JOIN reserva r ON r.id_clase = c.id JOIN sucursal s ON s.id = c.id_sucursal WHERE s.nombre = 'Centro' AND COUNT(r.id) &gt; 20 GROUP BY i.nombre;</code>`,
-        `<code>SELECT i.nombre, COUNT(r.id) FROM instructor i JOIN clase c ON c.id_instructor = i.id JOIN reserva r ON r.id_clase = c.id JOIN sucursal s ON s.id = c.id_sucursal GROUP BY i.nombre HAVING s.nombre = 'Centro' AND COUNT(r.id) &gt; 20;</code>`],
-    e: `WHERE filtra filas antes de agrupar (la sucursal) y HAVING filtra los grupos con funciones de agregación (COUNT). No se pueden usar agregaciones en WHERE, y s.nombre no puede evaluarse en HAVING si no es parte del agrupamiento.` },
-  { a: 2, c: 'E', q: `Con la base de datos en operación, dos socios reservan al mismo tiempo el último lugar de una clase y ambos reciben confirmación, de modo que la clase queda con un socio más que su cupo. ¿Qué medida evita este problema?`,
-    o: [`Ejecutar la verificación del cupo y el registro de la reserva dentro de una misma transacción, con un nivel de aislamiento o bloqueo que impida lecturas concurrentes inconsistentes.`,
-        `Crear un índice sobre la columna id_clase de la tabla reserva para acelerar el conteo de las reservas existentes.`,
-        `Normalizar la tabla reserva hasta la tercera forma normal para eliminar la redundancia en los datos de cada reserva.`],
-    e: `Es un problema de concurrencia: se resuelve con transacciones y control de aislamiento o bloqueo. Un índice mejora velocidad y la normalización evita redundancia, pero ninguno impide que dos transacciones lean el mismo cupo.` },
-  { a: 2, c: 'F', q: `¿Qué vulnerabilidad explica el primer problema, en el que un cliente vio el historial de compras de otra persona?`,
-    o: [`Control de acceso deficiente (referencia directa insegura a objetos): el sistema no valida que el pedido pertenezca al usuario autenticado.`,
-        `Autenticación deficiente: el sistema permite contraseñas débiles y no bloquea los intentos repetidos de ingreso.`,
-        `Exposición de datos sensibles: la información viaja sin cifrar entre el navegador y el servidor.`],
-    e: `Cambiar el identificador en la dirección y obtener datos ajenos indica que el servidor no verifica la autorización sobre el objeto solicitado (IDOR). No se trata de contraseñas ni del cifrado en tránsito.` },
-  { a: 2, c: 'F', q: `¿Qué vulnerabilidad explica el segundo problema y cómo se corrige?`,
-    o: [`Inyección SQL; se corrige con consultas parametrizadas (sentencias preparadas) y validación de las entradas.`,
-        `Secuencias de comandos entre sitios (XSS); se corrige codificando las salidas que se muestran en el navegador.`,
-        `Falsificación de petición en sitios cruzados (CSRF); se corrige con tokens de verificación en los formularios.`],
-    e: `La cadena <code>' OR '1'='1</code> altera la consulta a la base de datos: es inyección SQL. Su corrección principal son las consultas parametrizadas. XSS y CSRF son ataques de otra naturaleza.` },
-  { a: 2, c: 'F', q: `¿Qué tipo de prueba omitida habría detectado el tercer problema?`,
-    o: [`Pruebas de regresión, que verifican que las funciones existentes sigan operando después de un cambio.`,
-        `Pruebas de humo, que verifican que las funciones principales arranquen antes de iniciar pruebas detalladas.`,
-        `Pruebas de aceptación, que validan con el usuario que las características nuevas cumplan lo solicitado.`],
-    e: `Una función que operaba en la versión 2.2 y dejó de funcionar en la 2.3 es una regresión. Solo se probaron las características nuevas, por lo que faltaron pruebas de regresión.` },
-  { a: 2, q: `Un analista debe documentar los estados por los que pasa un pedido (creado, pagado, enviado, entregado o cancelado) y los eventos que provocan cada transición. ¿Qué diagrama UML es el más adecuado?`,
-    o: [`Diagrama de estados (máquina de estados), que muestra los estados de un objeto y las transiciones entre ellos.`,
-        `Diagrama de actividades, que muestra el flujo de acciones y decisiones de un proceso.`,
-        `Diagrama de secuencia, que muestra el intercambio ordenado de mensajes entre objetos.`],
-    e: `Los estados de un pedido y los eventos que los cambian se modelan con un diagrama de estados. El de actividades modela flujos de trabajo y el de secuencia, interacciones en el tiempo.` },
-  { a: 2, q: `Durante la migración del sistema escolar anterior, se detectó que tres sistemas guardan las fechas en formatos distintos y que aproximadamente 4 % de los alumnos está duplicado. Antes de cargar los datos en el sistema nuevo, ¿en qué fase del proceso ETL debe resolverse esta situación?`,
-    o: [`Transformación: se limpian, estandarizan y deduplican los datos extraídos antes de cargarlos.`,
-        `Extracción: se obtienen los datos de cada sistema de origen sin alterar su contenido.`,
-        `Carga: se insertan los datos en el sistema destino y se corrigen allí los errores detectados.`],
-    e: `La limpieza, estandarización de formatos y eliminación de duplicados corresponde a la transformación. La extracción solo obtiene los datos y la carga los inserta ya depurados.` },
-  { a: 2, q: `A una sucursal se le asignó la red 192.168.10.0/26. ¿Cuántos equipos pueden direccionarse y cuál es el rango utilizable?`,
-    o: [`62 equipos, del 192.168.10.1 al 192.168.10.62.`,
-        `64 equipos, del 192.168.10.0 al 192.168.10.63.`,
-        `30 equipos, del 192.168.10.1 al 192.168.10.30.`],
-    e: `Una máscara /26 deja 6 bits para equipos: 2⁶ = 64 direcciones, de las cuales la primera (.0) es la red y la última (.63) es el broadcast, por lo que quedan 62 utilizables (.1 a .62).` },
-  { a: 2, q: `Una aplicación móvil envía a un servicio web REST el registro completo del cliente 25, con todos sus campos, para sustituir por completo la información existente de ese cliente. ¿Qué solicitud HTTP corresponde?`,
-    o: [`<code>PUT /clientes/25</code>, con el cuerpo completo del recurso.`,
-        `<code>PATCH /clientes/25</code>, con solo los campos que cambian.`,
-        `<code>POST /clientes/25</code>, para crear un nuevo recurso asociado al cliente.`],
-    e: `PUT reemplaza completamente un recurso existente. PATCH aplica modificaciones parciales y POST se utiliza normalmente para crear recursos.` },
-
-  /* ===== ÁREA 4: Función informática (8) ===== */
-  { a: 3, c: 'G', q: `¿Qué práctica de ITIL falta para atender los 14 incidentes con el mismo síntoma?`,
-    o: [`Gestión de problemas, para identificar la causa raíz, registrar errores conocidos y evitar que los incidentes se repitan.`,
-        `Gestión de incidentes, para restablecer el servicio con mayor rapidez mediante un escalamiento más ágil.`,
-        `Gestión de niveles de servicio, para renegociar con los agentes los tiempos de resolución del SLA.`],
-    e: `Los incidentes ya se resuelven dentro del SLA (25 min frente a 60). Lo que falta es investigar la causa de los incidentes recurrentes, que es el propósito de la gestión de problemas.` },
-  { a: 3, c: 'G', q: `¿Qué práctica de ITIL atiende el hallazgo (b), referente a los cambios instalados directamente en producción?`,
-    o: [`Gestión de cambios, para evaluar, autorizar y programar los cambios con apoyo de un comité asesor de cambios.`,
-        `Gestión de configuraciones, para mantener actualizado el inventario de los elementos del portal y sus relaciones.`,
-        `Gestión de la disponibilidad, para asegurar que el portal cumpla con los niveles de disponibilidad acordados.`],
-    e: `Instalar cambios sin autorización documentada se corrige con la gestión de cambios (evaluación del riesgo, autorización y programación, normalmente con un comité asesor de cambios).` },
-  { a: 3, c: 'G', q: `El hallazgo (c) y el deseo del Director General de alinear TI con el negocio corresponden a la responsabilidad de la alta dirección de evaluar las necesidades de las partes interesadas, dar dirección a TI y monitorear su desempeño. ¿A qué dominio de COBIT 2019 pertenece esa responsabilidad?`,
-    o: [`EDM (Evaluar, Dirigir y Monitorear): gobierno, a cargo de la alta dirección.`,
-        `MEA (Monitorear, Evaluar y Valorar): gestión, a cargo de la gerencia de TI sobre el desempeño y la conformidad.`,
-        `APO (Alinear, Planificar y Organizar): gestión, a cargo de la gerencia de TI sobre la estrategia, el presupuesto y los riesgos.`],
-    e: `En COBIT 2019 el gobierno se agrupa en el dominio EDM y lo ejerce la alta dirección. APO, BAI, DSS y MEA pertenecen a la gestión, que realiza la gerencia.` },
-  { a: 3, c: 'G', q: `¿Cuál es la recomendación más adecuada para el Director General?`,
-    o: [`Asignar un responsable de la gestión de problemas, formalizar el control de cambios con autorización previa y reportar al comité indicadores como incidentes recurrentes y disponibilidad del portal.`,
-        `Aumentar la plantilla de la mesa de servicio para reducir el tiempo promedio de resolución por debajo de los 25 minutos actuales.`,
-        `Renegociar el SLA para ampliar el tiempo de resolución a 90 minutos y evitar incumplimientos en los incidentes recurrentes.`],
-    e: `Las tres deficiencias son de proceso y gobierno. Reducir un tiempo de resolución que ya cumple el SLA, o relajar el SLA, no ataca los incidentes recurrentes, los cambios sin control ni la falta de indicadores.` },
-  { a: 3, q: `Un analista de nómina modificó sin autorización el monto de su propio bono en el sistema y el cambio no dejó ningún registro. ¿Qué principio de la seguridad de la información se vio comprometido de forma directa?`,
-    o: [`Integridad: la información se alteró sin autorización y sin un rastro verificable.`,
-        `Confidencialidad: la información de nómina se reveló a una persona sin autorización para conocerla.`,
-        `Disponibilidad: se impidió a los usuarios autorizados acceder a la información de nómina.`],
-    e: `La alteración no autorizada de datos afecta la integridad. La confidencialidad se compromete cuando se revela información y la disponibilidad cuando se impide el acceso.` },
-  { a: 3, q: `Una empresa recaba nombres, correos y teléfonos de clientes mediante un formulario web para enviarles promociones. De acuerdo con la legislación mexicana de protección de datos personales en posesión de particulares, ¿qué debe hacer antes de tratar los datos?`,
-    o: [`Poner a disposición del titular un aviso de privacidad que informe los datos recabados, las finalidades del tratamiento y los medios para ejercer sus derechos.`,
-        `Solicitar a cada cliente una autorización por escrito con firma autógrafa para cualquier finalidad futura del tratamiento.`,
-        `Cifrar la base de datos y comunicar al titular únicamente cuando ocurra una vulneración de seguridad.`],
-    e: `La obligación previa al tratamiento es informar al titular mediante el aviso de privacidad. Cifrar y notificar vulneraciones son medidas de seguridad posteriores, y no se exige firma autógrafa para todo tratamiento.` },
-  { a: 3, q: `Una empresa elaborará su plan de continuidad del negocio. ¿Qué debe realizar primero?`,
-    o: [`El análisis de impacto al negocio (BIA), para identificar los procesos críticos y los tiempos de recuperación tolerables.`,
-        `La contratación de un sitio alterno que garantice la recuperación inmediata de todos los servicios de TI.`,
-        `La redacción de los procedimientos técnicos de recuperación paso a paso de cada servidor.`],
-    e: `El BIA define qué procesos son críticos y cuánto tiempo pueden estar detenidos; con esa información se eligen las estrategias (como un sitio alterno) y se redactan los procedimientos.` },
-  { a: 3, q: `Un empleado solicita a la mesa de servicio que se le instale una licencia de Visio, incluida en el catálogo de software aprobado de la empresa. En ITIL, ¿cómo debe clasificarse esta petición?`,
-    o: [`Solicitud de servicio: petición formal de algo preestablecido en el catálogo, sin que exista una falla.`,
-        `Incidente: interrupción o degradación de un servicio que debe restablecerse lo antes posible.`,
-        `Cambio normal: modificación de riesgo no predefinido que requiere evaluación y autorización del comité de cambios.`],
-    e: `Pedir un elemento preaprobado del catálogo, sin falla alguna, es una solicitud de servicio. No hay interrupción (incidente) ni una modificación que requiera evaluación individual de riesgo (cambio normal).` }
+print(f(10))</pre>`,
+    o: [`33`, `23`, `18`],
+    e: `Entre 1 y 10, los múltiplos de 3 o de 5 son 3, 5, 6, 9 y 10; su suma es 33. Excluir el 10 daría 23 (error por usar range(1, n)), y considerar solo múltiplos de 3 daría 18.` },
+  { a: 2, q: `El campo «edad» de un formulario acepta valores enteros de 18 a 65. Al aplicar la técnica de análisis de valores límite, ¿qué valores deben probarse?`,
+    o: [`17, 18, 65 y 66.`,
+        `18, 41 y 65.`,
+        `0, 17, 66 y 100.`],
+    e: `El análisis de valores límite prueba los valores en el borde del intervalo válido y los inmediatamente fuera de él: 17, 18, 65 y 66. Un valor central (41) y los extremos lejanos (0, 100) no verifican los bordes.` },
+  { a: 2, q: `La tabla <code>empleado</code> contiene cinco filas:
+<div class="tw"><table><thead><tr><th>id</th><th>correo</th><th>salario</th></tr></thead><tbody><tr><td>1</td><td>a@x.mx</td><td>10000</td></tr><tr><td>2</td><td>NULL</td><td>20000</td></tr><tr><td>3</td><td>c@x.mx</td><td>30000</td></tr><tr><td>4</td><td>NULL</td><td>40000</td></tr><tr><td>5</td><td>e@x.mx</td><td>NULL</td></tr></tbody></table></div>
+¿Qué resultado devuelve <code>SELECT COUNT(*), COUNT(correo), AVG(salario) FROM empleado;</code>?`,
+    o: [`5, 3 y 25000.`, `5, 5 y 20000.`, `5, 3 y 20000.`],
+    e: `COUNT(*) cuenta todas las filas (5); COUNT(correo) ignora los NULL (3); AVG(salario) ignora el NULL y promedia 10000, 20000, 30000 y 40000 (25000), no 100000 ÷ 5.` },
+  { a: 2, q: `Un usuario puede hacer ping a 8.8.8.8 con éxito, pero <code>ping www.ejemplo.com</code> responde «no se pudo encontrar el host». ¿Cuál es la causa más probable?`,
+    o: [`Falla en la resolución de nombres: el servidor DNS configurado es incorrecto o está inalcanzable.`,
+        `La puerta de enlace predeterminada es incorrecta, por lo que el equipo no puede salir a Internet.`,
+        `La máscara de subred es incorrecta, por lo que el equipo no puede comunicarse con ningún destino.`],
+    e: `Si hay conectividad por dirección IP hacia Internet, la puerta de enlace y la máscara funcionan. Lo que falla es la traducción del nombre a dirección, que corresponde al DNS.` },
+ 
+  { a: 3, c: 'E', q: `¿En qué orden debe atender la mesa de servicio los cuatro tickets, de mayor a menor prioridad?`,
+    o: [`T2, T4, T3, T1.`,
+        `T3, T2, T4, T1.`,
+        `T2, T3, T4, T1.`],
+    e: `Con la matriz: T2 (impacto alto, urgencia alta) = P1; T4 (medio, alta) = P2; T3 (bajo, alta) = P3; T1 (bajo, baja) = P4. La urgencia alta de un solo usuario no supera al impacto: el directivo queda en P3.` },
+  { a: 3, c: 'E', q: `Suponga que el ticket T2 se registró un viernes a las 17:30. De acuerdo con su prioridad y con el horario de la mesa, ¿cuándo vence su plazo de resolución?`,
+    o: [`El lunes a las 9:30.`,
+        `El viernes a las 21:30.`,
+        `El lunes a las 12:00.`],
+    e: `T2 es P1 (4 horas hábiles). El viernes quedan 2.5 horas (17:30 a 20:00). Faltan 1.5 horas, que se cumplen el lunes a las 9:30. El viernes a las 21:30 cuenta horas naturales y el lunes a las 12:00 reinicia el conteo.` },
+  { a: 3, c: 'E', q: `El ticket T2 lleva tres horas hábiles abierto, está asignado a un especialista de segundo nivel que aún no tiene un diagnóstico y el SLA vence en una hora. ¿Qué debe hacerse?`,
+    o: [`Aplicar un escalamiento jerárquico: notificar al gerente de servicio, activar el proceso de incidente mayor, mantener al especialista trabajando y comunicar el estado a los usuarios.`,
+        `Cerrar el ticket y abrir uno nuevo de problema para detener el conteo del SLA mientras se investiga la causa raíz.`,
+        `Reasignar el ticket a otro especialista de segundo nivel para reiniciar el tiempo de resolución.`],
+    e: `Ante el riesgo de incumplir el SLA de un incidente crítico, procede el escalamiento jerárquico y la gestión como incidente mayor, con comunicación a los afectados. Cerrar el ticket o reasignarlo para reiniciar el conteo manipula la medición y no restablece el servicio.` },
+  { a: 3, c: 'E', q: `En el mes, la mesa recibió 600 tickets. Se resolvieron 420 en el primer contacto, pero 30 de ellos fueron reabiertos porque el problema persistía. Si la organización define la resolución en el primer contacto (FCR) como los tickets resueltos en el primer contacto y que no fueron reabiertos, ¿cuál es el FCR del mes?`,
+    o: [`65 %: 390 de 600 tickets.`,
+        `70 %: 420 de 600 tickets.`,
+        `92.9 %: 390 de 420 tickets.`],
+    e: `Con la definición dada, cuentan 420 − 30 = 390 tickets sobre el total recibido (600): 65 %. El 70 % incluye los reabiertos y el 92.9 % calcula la proporción respecto de los resueltos en primer contacto, no del total.` },
+  { a: 3, q: `La dirección de una empresa fijó la meta empresarial «ofrecer una cultura de servicio orientada al cliente» y desea aplicar COBIT 2019. De acuerdo con la cascada de metas, ¿cuál es el siguiente paso?`,
+    o: [`Traducir la meta empresarial en metas de alineación de TI y, a partir de ellas, seleccionar los objetivos de gobierno y gestión relevantes.`,
+        `Seleccionar directamente los procesos equivalentes de ITIL y medirlos con los indicadores del SLA.`,
+        `Asignar a cada gerente los objetivos de gestión del dominio DSS y derivar después la meta empresarial.`],
+    e: `La cascada de metas de COBIT va de las metas empresariales a las metas de alineación y de estas a los objetivos de gobierno y gestión. No parte de procesos de otro marco ni invierte el sentido.` },
+  { a: 3, q: `En una evaluación de capacidad de procesos de COBIT 2019, el proceso de gestión de incidentes de una empresa está documentado y estandarizado, con plantillas, roles y un procedimiento que se aplica de forma uniforme en todas las áreas de TI, pero aún no se mide con métricas cuantitativas. ¿Qué nivel de capacidad tiene?`,
+    o: [`Nivel 3 (definido): el proceso se ejecuta con un procedimiento estándar de la organización.`,
+        `Nivel 2 (gestionado): el proceso se planifica y monitorea, pero cada área puede ejecutarlo de forma distinta.`,
+        `Nivel 4 (medible): el proceso se mide y controla con métricas cuantitativas.`],
+    e: `El proceso estandarizado en toda la organización corresponde al nivel 3. El nivel 2 se centra en planificar, monitorear y ajustar sin un estándar común, y el nivel 4 exige medición cuantitativa, que el caso descarta.` },
+  { a: 3, q: `Antes de actualizar un servidor de base de datos, el comité de cambios pregunta qué servicios del negocio dependen de él. ¿Qué fuente de información de ITIL debe consultarse?`,
+    o: [`La base de datos de gestión de la configuración (CMDB), que registra los elementos de configuración y sus relaciones con los servicios.`,
+        `La base de conocimiento, que almacena soluciones, errores conocidos y artículos de ayuda para los usuarios.`,
+        `El catálogo de servicios, que describe los servicios que se ofrecen a los clientes y sus condiciones.`],
+    e: `Para evaluar el impacto de un cambio se necesitan las relaciones entre elementos de configuración y servicios, que se almacenan en la CMDB. La base de conocimiento y el catálogo no registran dependencias técnicas.` },
+  { a: 3, q: `Se detecta una vulnerabilidad crítica que ya está siendo explotada activamente contra los servidores web de la empresa, y el parche debe aplicarse hoy. ¿Cómo debe clasificarse y tramitarse el cambio en ITIL?`,
+    o: [`Cambio de emergencia: autorización acelerada por un comité de emergencia (ECAB), implementación inmediata y revisión posterior.`,
+        `Cambio estándar: preautorizado, de bajo riesgo y con procedimiento conocido, aplicado sin evaluación adicional.`,
+        `Cambio normal: evaluado y autorizado por el comité de cambios en su siguiente reunión semanal programada.`],
+    e: `Una amenaza activa que exige acción el mismo día es un cambio de emergencia, con aprobación acelerada y revisión posterior. Un cambio estándar no aplica a una situación crítica no rutinaria y esperar la reunión semanal prolongaría la exposición.` }
 ];
 
-const KEY = 'egel-simulacro80-v1';
+const KEY = 'egel-simulacro-avanzado-v1';
 const app = document.getElementById('app');
 const hdr = document.getElementById('hdr');
 const toastEl = document.getElementById('toast');
@@ -464,12 +487,12 @@ document.addEventListener('visibilitychange', tick);
 
 function renderHeader() {
   if (view === 'quiz' && S) {
-    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Simulacro</strong><span>' + esc(S.name) + '</span></div>' +
+    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Avanzado</strong><span>' + esc(S.name) + '</span></div>' +
       '<div class="hr"><span class="cnt">' + answered() + '/' + Q.length + '</span><span class="clock' + (remaining() <= 600000 ? ' low' : '') + '" id="clock" role="timer" aria-label="Tiempo restante">' + fmt(remaining()) + '</span></div>';
   } else if (view === 'results' && S) {
-    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Simulacro</strong><span>Resultados de ' + esc(S.name) + '</span></div>';
+    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Avanzado</strong><span>Resultados de ' + esc(S.name) + '</span></div>';
   } else {
-    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Simulacro</strong><span>80 minutos</span></div>';
+    hdr.innerHTML = '<div class="hl"><strong>EGEL Informática · Avanzado</strong><span>80 minutos</span></div>';
   }
 }
 
@@ -493,7 +516,7 @@ function renderWelcome() {
     resume = '<div class="resume"><p>Hay un intento ' + state + ' de <strong>' + esc(saved.name) + '</strong> (' + n + ' de ' + Q.length + ' respondidas).</p>' +
       '<div class="row"><button class="btn primary" data-a="resume">' + (saved.finished || left <= 0 ? 'Ver resultados' : 'Continuar') + '</button></div></div>';
   }
-  app.innerHTML = '<section class="card hero"><h1>Simulacro EGEL Informática</h1>' +
+  app.innerHTML = '<section class="card hero"><h1>Simulacro EGEL Informática Avanzado</h1>' +
     '<p class="lead">Examen de práctica. Lee cuidadosamente cada cuestionamiento.</p>' +
     '<div class="facts">' + facts + '</div>' +
     '<ul class="rules"><li>El cronómetro de 80 minutos empieza al comenzar y no se pausa. Al terminar el tiempo, el examen se cierra solo.</li>' +
@@ -514,7 +537,7 @@ function renderWelcome() {
 
 function caseHtml(c) {
   const k = CASES[c];
-  return '<aside class="case" aria-label="Caso"><span class="ct">Lee el caso · ' + esc(k.t) + '</span>' + k.p.map(p => '<p>' + p + '</p>').join('') + '</aside>';
+  return '<aside class="case" aria-label="Caso"><span class="ct">Lee el caso · ' + esc(k.t) + '</span>' + k.p.map(p => /^<(pre|div|table)/.test(p) ? p : '<p>' + p + '</p>').join('') + '</aside>';
 }
 function casePos(i) {
   const c = Q[i].c; if (!c) return '';
@@ -547,7 +570,7 @@ function renderQuiz() {
     '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + Q.length + '" aria-valuenow="' + done + '" aria-label="Preguntas respondidas"><i style="width:' + pct + '%"></i></div>' +
     '<section class="card" aria-live="polite"><div class="qhead"><span class="chip o">Área ' + (q.a + 1) + ' · ' + esc(ar.name) + '</span><span class="qnum">Pregunta ' + (i + 1) + ' de ' + Q.length + (q.c ? ' · ' + casePos(i) : '') + '</span></div>' +
     (q.c ? caseHtml(q.c) : '') +
-    '<p class="qtext">' + q.q + '</p><div class="opts" role="radiogroup" aria-label="Opciones de respuesta">' + opts + '</div>' +
+    '<div class="qtext">' + q.q + '</div><div class="opts" role="radiogroup" aria-label="Opciones de respuesta">' + opts + '</div>' +
     '<div class="row" style="margin-top:18px"><button class="flag" data-a="flag" aria-pressed="' + S.flags[i] + '"><i></i>' + (S.flags[i] ? 'Marcada para revisar' : 'Marcar para revisar') + '</button></div></section>' +
     '<div class="row between"><button class="btn" data-a="prev"' + (i === 0 ? ' disabled' : '') + '>← Anterior</button>' +
     '<button class="btn" data-a="next"' + (i === Q.length - 1 ? ' disabled' : '') + '>Siguiente →</button></div>' +
@@ -585,7 +608,7 @@ function renderResults() {
       const q = Q[i], mine = S.answers[i];
       return '<article class="card rcard"><div class="qhead"><span class="chip o">Área ' + (q.a + 1) + ' · ' + esc(AREAS[q.a].name) + '</span><span class="qnum">Pregunta ' + (i + 1) + '</span></div>' +
         (q.c ? '<details class="dcase"><summary>Leer de nuevo el caso: ' + esc(CASES[q.c].t) + '</summary>' + caseHtml(q.c) + '</details>' : '') +
-        '<p class="qtext">' + q.q + '</p>' +
+        '<div class="qtext">' + q.q + '</div>' +
         '<div class="ans bad"><span class="tag">Tu respuesta</span><span>' + (mine === null ? 'Sin responder' : q.o[mine]) + '</span></div>' +
         '<div class="ans good"><span class="tag">Correcta</span><span>' + q.o[0] + '</span></div>' +
         '<p class="why"><b>Por qué:</b> ' + esc(q.e).replace(/&lt;code&gt;/g, '<code>').replace(/&lt;\/code&gt;/g, '</code>') + '</p></article>';
